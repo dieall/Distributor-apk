@@ -1,0 +1,152 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Barang;
+use App\Models\Pembelian;
+use App\Models\Pengeluaran;
+use App\Models\PenerimaanBarang;
+use App\Models\PermintaanBarang;
+use App\Models\Stok;
+use App\Models\StokMutasi;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $bulanIni = [now()->startOfMonth()->toDateString(), now()->endOfMonth()->toDateString()];
+        $penjualanBulanIni = DB::table('permintaan_detail')
+            ->join('permintaan_barang', 'permintaan_detail.permintaan_id', '=', 'permintaan_barang.id')
+            ->whereBetween('permintaan_barang.tanggal_request', $bulanIni)
+            ->where('permintaan_detail.is_checked', true)
+            ->sum('permintaan_detail.subtotal_jual');
+        $pembelianBulanIni = Pembelian::whereBetween('tanggal', $bulanIni)->sum('total');
+        $pengeluaranBulanIni = Pengeluaran::whereBetween('tanggal', $bulanIni)->sum('nominal');
+        $keuntunganBulanIni = $penjualanBulanIni - $pembelianBulanIni - $pengeluaranBulanIni;
+
+        // === Stats Cards ===
+        $stats = [
+            'total_users'         => User::count(),
+            'total_admin'         => User::where('role', 'admin')->count(),
+            'total_gudang'        => User::where('role', 'gudang')->count(),
+            'total_sales'         => User::where('role', 'sales')->count(),
+            'total_supplier'      => User::where('role', 'supplier')->count(),
+            'total_pelanggan'     => User::where('role', 'pelanggan')->count(),
+            'total_barang'        => Barang::count(),
+            'total_po'            => Pembelian::count(),
+            'po_bulan_ini'        => Pembelian::whereMonth('tanggal', now()->month)->whereYear('tanggal', now()->year)->count(),
+            'nilai_pembelian'     => $pembelianBulanIni,
+            'nilai_penjualan'     => $penjualanBulanIni,
+            'nilai_pengeluaran'   => $pengeluaranBulanIni,
+            'nilai_keuntungan'    => $keuntunganBulanIni,
+            'permintaan_pending'  => PermintaanBarang::where('status', 'pending')->count(),
+            'permintaan_bulan'    => PermintaanBarang::whereMonth('tanggal_request', now()->month)->count(),
+            'stok_rendah'         => Stok::join('barang', 'stok.barang_id', '=', 'barang.id')
+                                        ->whereColumn('stok.jumlah', '<=', 'barang.stok_minimum')
+                                        ->count(),
+            'nilai_stok'          => Stok::selectRaw('SUM(stok.jumlah * stok.harga_rata) as total')->value('total') ?? 0,
+        ];
+
+        // === Chart: Pembelian 6 bulan terakhir (bulanan) ===
+        $pembelianChart = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $bulan = now()->subMonths($i);
+            $pembelianChart[] = [
+                'label' => $bulan->translatedFormat('M Y'),
+                'total' => (float) Pembelian::whereYear('tanggal', $bulan->year)
+                                ->whereMonth('tanggal', $bulan->month)
+                                ->sum('total'),
+                'count' => Pembelian::whereYear('tanggal', $bulan->year)
+                                ->whereMonth('tanggal', $bulan->month)
+                                ->count(),
+            ];
+        }
+
+        // === Chart: Permintaan Barang 6 bulan terakhir ===
+        $permintaanChart = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $bulan = now()->subMonths($i);
+            $permintaanChart[] = [
+                'label' => $bulan->translatedFormat('M Y'),
+                'count' => PermintaanBarang::whereYear('tanggal_request', $bulan->year)
+                                ->whereMonth('tanggal_request', $bulan->month)
+                                ->count(),
+            ];
+        }
+
+        // === Chart: Profit 6 bulan terakhir ===
+        $profitChart = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $bulan = now()->subMonths($i);
+            $periode = [
+                $bulan->copy()->startOfMonth()->toDateString(),
+                $bulan->copy()->endOfMonth()->toDateString(),
+            ];
+            $penjualan = DB::table('permintaan_detail')
+                ->join('permintaan_barang', 'permintaan_detail.permintaan_id', '=', 'permintaan_barang.id')
+                ->whereBetween('permintaan_barang.tanggal_request', $periode)
+                ->where('permintaan_detail.is_checked', true)
+                ->sum('permintaan_detail.subtotal_jual');
+            $pembelian = Pembelian::whereBetween('tanggal', $periode)->sum('total');
+            $pengeluaran = Pengeluaran::whereBetween('tanggal', $periode)->sum('nominal');
+
+            $profitChart[] = [
+                'label' => $bulan->translatedFormat('M Y'),
+                'penjualan' => (float) $penjualan,
+                'pembelian' => (float) $pembelian,
+                'pengeluaran' => (float) $pengeluaran,
+                'keuntungan' => (float) ($penjualan - $pembelian - $pengeluaran),
+            ];
+        }
+
+        // === Chart: Status PO (donut) ===
+        $poStatus = Pembelian::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        // === Stok Rendah List ===
+        $stokRendah = Stok::join('barang', 'stok.barang_id', '=', 'barang.id')
+            ->whereColumn('stok.jumlah', '<=', 'barang.stok_minimum')
+            ->select('barang.nama', 'barang.kode', 'barang.satuan', 'barang.stok_minimum', 'stok.jumlah')
+            ->orderBy('stok.jumlah', 'asc')
+            ->limit(5)
+            ->get();
+
+        // === Aktivitas Terbaru (PO + Permintaan) ===
+        $recentPO = Pembelian::with('supplier')
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
+        $recentPermintaan = PermintaanBarang::with('pelanggan')
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
+        // === Top Barang Diminati (dari permintaan detail) ===
+        $topBarang = DB::table('permintaan_detail')
+            ->join('barang', 'permintaan_detail.barang_id', '=', 'barang.id')
+            ->select('barang.nama', 'barang.kode', DB::raw('SUM(permintaan_detail.jumlah_diminta) as total_diminta'))
+            ->groupBy('barang.id', 'barang.nama', 'barang.kode')
+            ->orderByDesc('total_diminta')
+            ->limit(5)
+            ->get();
+
+        return view('admin.dashboard', compact(
+            'stats',
+            'pembelianChart',
+            'permintaanChart',
+            'profitChart',
+            'poStatus',
+            'stokRendah',
+            'recentPO',
+            'recentPermintaan',
+            'topBarang'
+        ));
+    }
+}

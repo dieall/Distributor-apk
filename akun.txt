@@ -1,0 +1,15 @@
+Role	Email	Password
+Admin
+admin@distributor.com
+password
+Gudang
+gudang@distributor.com
+password
+Sales
+sales@distributor.com
+password
+Supplier
+supplier@distributor.com
+password
+Pelanggan
+pelanggan@distributor.com
