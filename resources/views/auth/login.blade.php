@@ -1,71 +1,48 @@
 @extends('layouts.auth')
 
-@section('title', 'Login')
+@section('title', 'Masuk')
 
 @section('content')
-<section class="bg-white flex flex-wrap min-h-[100vh]">
-    {{-- Gambar Kiri --}}
-    <div class="lg:w-1/2 lg:block hidden bg-gradient-to-br from-primary-600 to-primary-800">
-        <div class="flex items-center flex-col h-full justify-center p-12">
-            <div class="text-center text-white mb-8">
-                <h1 class="text-4xl font-bold mb-4">Distributor APK</h1>
-                <p class="text-primary-100 text-lg">Sistem Manajemen Distribusi Terpadu</p>
-            </div>
-            <img src="{{ asset('assets/images/auth/auth-img.png') }}" alt="Auth Image" class="max-w-md w-full">
-            <div class="mt-8 grid grid-cols-3 gap-4 text-center text-white">
-                <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
-                    <div class="text-2xl font-bold">5+</div>
-                    <div class="text-sm text-primary-100">Role Pengguna</div>
-                </div>
-                <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
-                    <div class="text-2xl font-bold">Real</div>
-                    <div class="text-sm text-primary-100">Time Data</div>
-                </div>
-                <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
-                    <div class="text-2xl font-bold">24/7</div>
-                    <div class="text-sm text-primary-100">Support</div>
-                </div>
-            </div>
+<section class="bg-white dark:bg-dark-2 flex flex-wrap min-h-[100vh]">
+    {{-- Kiri: ilustrasi (sama seperti Wowdash sign-in) --}}
+    <div class="lg:w-1/2 lg:block hidden">
+        <div class="flex items-center flex-col h-full min-h-[100vh] justify-center bg-neutral-50 dark:bg-neutral-900/40 px-8 border-e border-neutral-200 dark:border-neutral-700">
+            <img src="{{ asset('assets/images/auth/auth-img.png') }}" alt="" class="max-w-lg w-full object-contain">
         </div>
     </div>
 
-    {{-- Form Login Kanan --}}
-    <div class="lg:w-1/2 py-8 px-6 flex flex-col justify-center">
+    {{-- Kanan: form login --}}
+    <div class="w-full lg:w-1/2 py-10 px-6 sm:px-10 flex flex-col justify-center">
         <div class="lg:max-w-[464px] mx-auto w-full">
             <div class="mb-8">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center">
-                        <iconify-icon icon="ri:truck-fill" class="text-white text-xl"></iconify-icon>
-                    </div>
-                    <span class="text-xl font-bold text-neutral-800">Distributor APK</span>
-                </div>
-                <h4 class="mb-2 text-2xl font-bold text-neutral-800">Selamat Datang! 👋</h4>
-                <p class="text-secondary-light text-base">Masukkan email dan password untuk masuk ke akun Anda</p>
+                <a href="{{ route('login') }}" class="inline-block mb-4">
+                    <img src="{{ asset('assets/images/logo.png') }}" alt="Distributor APK" class="max-h-10 w-auto dark:hidden">
+                    <img src="{{ asset('assets/images/logo-light.png') }}" alt="Distributor APK" class="max-h-10 w-auto hidden dark:block">
+                </a>
+                <h4 class="mb-2 text-neutral-800 dark:text-white font-semibold">Masuk ke akun Anda</h4>
+                <p class="mb-0 text-secondary-light text-lg">Selamat datang kembali. Silakan masukkan email dan password.</p>
             </div>
 
-            {{-- Error Message --}}
             @if ($errors->any())
-                <div class="bg-danger-50 border border-danger-200 text-danger-700 rounded-xl px-4 py-3 mb-6 flex items-center gap-3">
-                    <iconify-icon icon="ri:error-warning-line" class="text-danger-500 text-xl flex-shrink-0"></iconify-icon>
-                    <div>
-                        @foreach ($errors->all() as $error)
-                            <p class="text-sm">{{ $error }}</p>
-                        @endforeach
-                    </div>
+            <div class="bg-danger-50 border border-danger-200 text-danger-700 dark:bg-danger-500/10 dark:border-danger-500/30 dark:text-danger-300 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
+                <iconify-icon icon="ri:error-warning-line" class="text-xl flex-shrink-0"></iconify-icon>
+                <div class="text-sm">
+                    @foreach ($errors->all() as $error)
+                    <p class="mb-0 last:mb-0">{{ $error }}</p>
+                    @endforeach
                 </div>
+            </div>
             @endif
 
-            {{-- Success Message --}}
             @if (session('success'))
-                <div class="bg-success-50 border border-success-200 text-success-700 rounded-xl px-4 py-3 mb-6">
-                    {{ session('success') }}
-                </div>
+            <div class="bg-success-50 border border-success-200 text-success-700 dark:bg-success-500/10 dark:border-success-500/30 dark:text-success-300 rounded-xl px-4 py-3 mb-6 text-sm">
+                {{ session('success') }}
+            </div>
             @endif
 
             <form method="POST" action="{{ route('login.post') }}">
                 @csrf
 
-                {{-- Email --}}
                 <div class="icon-field mb-4 relative">
                     <span class="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl text-secondary-light">
                         <iconify-icon icon="mage:email"></iconify-icon>
@@ -74,14 +51,13 @@
                         type="email"
                         name="email"
                         value="{{ old('email') }}"
-                        class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 rounded-xl w-full @error('email') border-danger-400 @enderror"
+                        class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 dark:border-neutral-600 rounded-xl w-full @error('email') border-danger-400 @enderror"
                         placeholder="Email"
                         required
                         autocomplete="email"
                     >
                 </div>
 
-                {{-- Password --}}
                 <div class="relative mb-5">
                     <div class="icon-field">
                         <span class="absolute start-4 top-1/2 -translate-y-1/2 pointer-events-none flex text-xl text-secondary-light">
@@ -90,7 +66,7 @@
                         <input
                             type="password"
                             name="password"
-                            class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 rounded-xl w-full @error('password') border-danger-400 @enderror"
+                            class="form-control h-[56px] ps-11 border-neutral-300 bg-neutral-50 dark:bg-dark-2 dark:border-neutral-600 rounded-xl w-full @error('password') border-danger-400 @enderror"
                             id="your-password"
                             placeholder="Password"
                             required
@@ -100,68 +76,31 @@
                     <span class="toggle-password ri-eye-line cursor-pointer absolute end-0 top-1/2 -translate-y-1/2 me-4 text-secondary-light" data-toggle="#your-password"></span>
                 </div>
 
-                {{-- Remember Me --}}
-                <div class="flex justify-between gap-2 items-center">
-                    <div class="flex items-center gap-2">
-                        <input
-                            class="form-check-input border border-neutral-300 rounded"
-                            type="checkbox"
-                            name="remember"
-                            id="remember"
-                        >
-                        <label class="text-sm text-neutral-600" for="remember">Ingat saya</label>
+                <div class="mt-7">
+                    <div class="flex justify-between gap-2 items-center flex-wrap">
+                        <div class="flex items-center">
+                            <input class="form-check-input border border-neutral-300 dark:border-neutral-600" type="checkbox" name="remember" id="remember" value="1">
+                            <label class="ps-2 text-sm text-neutral-700 dark:text-neutral-300 mb-0 cursor-pointer" for="remember">Ingat saya</label>
+                        </div>
                     </div>
                 </div>
 
-                {{-- Submit Button --}}
-                <button
-                    type="submit"
-                    class="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl mt-8 font-semibold"
-                >
+                <button type="submit" class="btn btn-primary justify-center text-sm btn-sm px-3 py-4 w-full rounded-xl mt-8">
                     <iconify-icon icon="ri:login-box-line" class="me-2"></iconify-icon>
-                    Masuk ke Sistem
+                    Masuk
                 </button>
             </form>
 
-            {{-- Role Info --}}
-            <div class="mt-8 p-4 bg-neutral-50 rounded-xl border border-neutral-200">
-                <p class="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-3">Akses Role Tersedia</p>
-                <div class="grid grid-cols-5 gap-2">
-                    <div class="text-center">
-                        <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center mx-auto mb-1">
-                            <iconify-icon icon="ri:shield-user-line" class="text-purple-600 text-sm"></iconify-icon>
-                        </div>
-                        <span class="text-xs text-neutral-500">Admin</span>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-1">
-                            <iconify-icon icon="ri:store-2-line" class="text-blue-600 text-sm"></iconify-icon>
-                        </div>
-                        <span class="text-xs text-neutral-500">Gudang</span>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center mx-auto mb-1">
-                            <iconify-icon icon="ri:bar-chart-line" class="text-green-600 text-sm"></iconify-icon>
-                        </div>
-                        <span class="text-xs text-neutral-500">Sales</span>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center mx-auto mb-1">
-                            <iconify-icon icon="ri:truck-line" class="text-orange-600 text-sm"></iconify-icon>
-                        </div>
-                        <span class="text-xs text-neutral-500">Supplier</span>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center mx-auto mb-1">
-                            <iconify-icon icon="ri:user-heart-line" class="text-pink-600 text-sm"></iconify-icon>
-                        </div>
-                        <span class="text-xs text-neutral-500">Pelanggan</span>
-                    </div>
-                </div>
+            <div class="mt-8 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700">
+                <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide mb-2">Peran di sistem</p>
+                <p class="text-sm text-secondary-light mb-0 leading-relaxed">
+                    Admin, Gudang, Sales, Supplier, dan Pelanggan menggunakan halaman login yang sama.
+                    Akun supplier (PT) <strong class="text-neutral-700 dark:text-neutral-200">dibuat oleh administrator</strong> di menu Data Supplier.
+                </p>
             </div>
 
-            <p class="text-center text-xs text-neutral-400 mt-6">
-                &copy; {{ date('Y') }} Distributor APK. Semua hak dilindungi.
+            <p class="text-center text-sm text-secondary-light mt-8 mb-0">
+                &copy; {{ date('Y') }} Distributor APK
             </p>
         </div>
     </div>

@@ -58,7 +58,7 @@
             <thead>
                 <tr class="bg-neutral-50 dark:bg-neutral-800">
                     <th class="text-left px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Barang</th>
-                    <th class="text-right px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Jumlah Diterima</th>
+                    <th class="text-right px-6 py-3 text-xs font-semiold text-secondary-light uppercase">Jumlah Diterima</th>
                     <th class="text-right px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Harga Satuan</th>
                     <th class="text-right px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Subtotal</th>
                 </tr>

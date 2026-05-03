@@ -5,6 +5,9 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\BarangController;
 use App\Http\Controllers\Admin\PembelianController;
 use App\Http\Controllers\Admin\PengeluaranController;
+use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\SuratJalanController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Gudang\DashboardController as GudangDashboard;
 use App\Http\Controllers\Gudang\PenerimaanController;
 use App\Http\Controllers\Gudang\StokController;
@@ -35,6 +38,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Barang (Master Data)
     Route::resource('barang', BarangController::class);
 
+    // Supplier (hanya admin yang mengelola akun supplier / PT)
+    Route::resource('suppliers', SupplierController::class)->except(['show']);
+
     // Pembelian
     Route::get('pembelian', [PembelianController::class, 'index'])->name('pembelian.index');
     Route::get('pembelian/create', [PembelianController::class, 'create'])->name('pembelian.create');
@@ -43,7 +49,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('pembelian/{pembelian}/status', [PembelianController::class, 'updateStatus'])->name('pembelian.status');
 
     // Pengeluaran Operasional
-    Route::resource('pengeluaran', PengeluaranController::class)->only(['index', 'create', 'store', 'destroy']);
+    Route::resource('pengeluaran', PengeluaranController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
+
+    // Surat Jalan (admin)
+    Route::get('surat-jalan', [SuratJalanController::class, 'index'])->name('surat-jalan.index');
+    Route::get('surat-jalan/create', [SuratJalanController::class, 'create'])->name('surat-jalan.create');
+    Route::post('surat-jalan', [SuratJalanController::class, 'store'])->name('surat-jalan.store');
+    Route::get('surat-jalan/{suratJalan}', [SuratJalanController::class, 'show'])->name('surat-jalan.show');
+    Route::get('surat-jalan/{suratJalan}/print', [SuratJalanController::class, 'print'])->name('surat-jalan.print');
+    Route::patch('surat-jalan/{suratJalan}/status', [SuratJalanController::class, 'updateStatus'])->name('surat-jalan.status');
+
+    // Invoice (admin)
+    Route::get('invoice', [InvoiceController::class, 'index'])->name('invoice.index');
+    Route::get('invoice/{permintaan}', [InvoiceController::class, 'show'])->name('invoice.show');
+    Route::get('invoice/{permintaan}/print', [InvoiceController::class, 'print'])->name('invoice.print');
 });
 
 // Gudang routes

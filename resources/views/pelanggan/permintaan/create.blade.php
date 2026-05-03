@@ -44,48 +44,62 @@
 
 {{-- Katalog Barang --}}
 <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl overflow-hidden mb-6">
-    <div class="px-6 py-4 border-b border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 flex items-center justify-between">
+    <div class="px-6 py-4 border-b border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2">
             <iconify-icon icon="ri:shopping-bag-3-line" class="text-pink-500 text-lg"></iconify-icon>
             <h6 class="font-semibold mb-0 dark:text-white text-sm">Pilih Barang</h6>
         </div>
-        <p class="text-secondary-light text-xs mb-0">Centang barang yang ingin dipesan</p>
+        <p class="text-secondary-light text-xs mb-0">Centang barang &amp; isi jumlah. <span class="text-neutral-500">Harga MBG dari admin.</span></p>
     </div>
     <div class="overflow-x-auto">
-        <table class="w-full text-sm" id="tabel-katalog">
+        <table class="w-full text-sm table-fixed min-w-[720px]" id="tabel-katalog">
+            <colgroup>
+                <col class="w-12">
+                <col class="w-[28%]">
+                <col class="w-[14%]">
+                <col class="w-20">
+                <col class="w-28">
+                <col class="w-28">
+                <col class="w-32">
+            </colgroup>
             <thead>
-                <tr class="bg-neutral-50 dark:bg-neutral-800">
-                    <th class="px-5 py-3 text-xs font-semibold text-secondary-light" style="width:44px">
-                        <input type="checkbox" id="check-all" class="w-4 h-4 rounded border-neutral-300 text-primary-600 cursor-pointer">
+                <tr class="bg-neutral-100 dark:bg-neutral-800/90 border-b border-neutral-200 dark:border-neutral-600">
+                    <th class="px-3 py-3 text-center align-middle">
+                        <input type="checkbox" id="check-all" class="w-4 h-4 rounded border-neutral-300 text-primary-600 cursor-pointer" title="Pilih semua">
                     </th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-secondary-light uppercase">Nama Barang</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-secondary-light uppercase">Kategori</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-secondary-light uppercase">Satuan</th>
-                    <th class="text-right px-5 py-3 text-xs font-semibold text-secondary-light uppercase">Harga</th>
-                    <th class="text-left px-5 py-3 text-xs font-semibold text-secondary-light uppercase">Jumlah Diminta</th>
+                    <th class="text-left px-3 py-3 text-xs font-semibold text-secondary-light uppercase tracking-wide align-middle">Nama Barang</th>
+                    <th class="text-left px-3 py-3 text-xs font-semibold text-secondary-light uppercase tracking-wide align-middle">Kategori</th>
+                    <th class="text-left px-3 py-3 text-xs font-semibold text-secondary-light uppercase tracking-wide align-middle">Satuan</th>
+                    <th class="text-right px-3 py-3 text-xs font-semibold text-secondary-light uppercase tracking-wide align-middle">Harga</th>
+                    <th class="text-right px-3 py-3 text-xs font-semibold text-secondary-light uppercase tracking-wide align-middle">Harga MBG</th>
+                    <th class="text-center px-3 py-3 text-xs font-semibold text-secondary-light uppercase tracking-wide align-middle">Jumlah</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-neutral-100 dark:divide-neutral-600">
                 @forelse($barang as $b)
-                <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-600 transition">
-                    <td class="px-5 py-3.5 text-center">
+                @php
+                    $hargaMbg = $b->harga_mbg ?? $b->harga_jual;
+                @endphp
+                <tr class="hover:bg-neutral-50/80 dark:hover:bg-neutral-600/40 transition-colors align-middle">
+                    <td class="px-3 py-3 text-center">
                         <input type="checkbox" name="barang_id[]" value="{{ $b->id }}" class="check-item w-4 h-4 rounded border-neutral-300 text-primary-600 cursor-pointer">
                     </td>
-                    <td class="px-5 py-3.5">
-                        <p class="font-semibold text-sm dark:text-white mb-0">{{ $b->nama }}</p>
-                        <p class="text-xs text-secondary-light mb-0">{{ $b->kode }}</p>
+                    <td class="px-3 py-3">
+                        <p class="font-semibold text-sm dark:text-white mb-0 leading-snug">{{ $b->nama }}</p>
+                        <p class="text-xs text-secondary-light mb-0 font-mono">{{ $b->kode }}</p>
                     </td>
-                    <td class="px-5 py-3.5 text-sm text-secondary-light">{{ $b->kategori }}</td>
-                    <td class="px-5 py-3.5 text-sm text-secondary-light">{{ $b->satuan }}</td>
-                    <td class="px-5 py-3.5 text-right text-sm font-semibold text-success-600">Rp {{ number_format($b->harga_jual, 0, ',', '.') }}</td>
-                    <td class="px-5 py-3.5">
-                        <input type="number" name="jumlah_diminta[]" value="1" min="1" step="0.01"
-                            class="input-jumlah w-24 px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500" disabled>
+                    <td class="px-3 py-3 text-secondary-light text-xs sm:text-sm leading-tight">{{ $b->kategori }}</td>
+                    <td class="px-3 py-3 text-secondary-light text-sm whitespace-nowrap">{{ $b->satuan }}</td>
+                    <td class="px-3 py-3 text-right text-sm font-semibold text-success-600 whitespace-nowrap">Rp {{ number_format($b->harga_jual, 0, ',', '.') }}</td>
+                    <td class="px-3 py-3 text-right text-sm font-semibold text-primary-600 whitespace-nowrap">Rp {{ number_format($hargaMbg, 0, ',', '.') }}</td>
+                    <td class="px-3 py-3">
+                        <input type="number" name="jumlah_diminta[{{ $b->id }}]" value="1" min="1" step="0.01"
+                            class="input-jumlah w-full max-w-[7rem] mx-auto block px-2.5 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm text-center bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500" disabled>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-5 py-12 text-center">
+                    <td colspan="7" class="px-5 py-12 text-center">
                         <iconify-icon icon="ri:inbox-line" class="text-3xl text-neutral-300 block mx-auto mb-2"></iconify-icon>
                         <p class="text-sm text-secondary-light mb-0">Tidak ada barang tersedia</p>
                     </td>
@@ -119,7 +133,7 @@ document.querySelectorAll('.check-item').forEach(cb => {
         if (this.checked) inp.focus();
     });
 });
-document.getElementById('check-all').addEventListener('change', function() {
+document.getElementById('check-all')?.addEventListener('change', function() {
     document.querySelectorAll('.check-item').forEach(cb => {
         cb.checked = this.checked;
         cb.dispatchEvent(new Event('change'));

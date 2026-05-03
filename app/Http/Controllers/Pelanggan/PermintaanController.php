@@ -7,6 +7,7 @@ use App\Models\PermintaanBarang;
 use App\Models\Barang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class PermintaanController extends Controller
 {
@@ -37,6 +38,14 @@ class PermintaanController extends Controller
             'jumlah_diminta.*'   => 'required|numeric|min:1',
         ]);
 
+        foreach ($request->barang_id as $bid) {
+            if (! isset($request->jumlah_diminta[$bid])) {
+                throw ValidationException::withMessages([
+                    'jumlah_diminta' => 'Jumlah untuk setiap barang yang dipilih wajib diisi.',
+                ]);
+            }
+        }
+
         DB::transaction(function () use ($request) {
             $count = PermintaanBarang::whereDate('created_at', today())->count() + 1;
             $no    = 'REQ-' . date('Ymd') . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
@@ -50,10 +59,10 @@ class PermintaanController extends Controller
                 'catatan'            => $request->catatan,
             ]);
 
-            foreach ($request->barang_id as $i => $bid) {
+            foreach ($request->barang_id as $bid) {
                 $permintaan->detail()->create([
-                    'barang_id'      => $bid,
-                    'jumlah_diminta' => $request->jumlah_diminta[$i],
+                    'barang_id'        => $bid,
+                    'jumlah_diminta'   => $request->jumlah_diminta[$bid],
                     'jumlah_disetujui' => 0,
                 ]);
             }

@@ -10,7 +10,7 @@ class Pengeluaran extends Model
     protected $table = 'pengeluaran';
 
     protected $fillable = [
-        'tanggal', 'kategori', 'keterangan', 'nominal', 'dibuat_oleh',
+        'tanggal', 'kategori', 'keterangan', 'nominal', 'bukti_foto', 'dibuat_oleh',
     ];
 
     protected $casts = [

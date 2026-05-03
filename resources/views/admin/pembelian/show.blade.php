@@ -139,7 +139,7 @@
             <h6 class="font-semibold mb-0 dark:text-white text-sm">Update Status</h6>
         </div>
         <div class="p-6">
-            <form action="{{ route('admin.pembelian.updateStatus', $pembelian) }}" method="POST" class="flex items-end gap-3">
+            <form action="{{ route('admin.pembelian.status', $pembelian) }}" method="POST" class="flex items-end gap-3">
                 @csrf @method('PATCH')
                 <div class="flex-1">
                     <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Status Baru</label>

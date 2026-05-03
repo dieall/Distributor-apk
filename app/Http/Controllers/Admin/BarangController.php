@@ -44,9 +44,12 @@ class BarangController extends Controller
             'kategori'      => 'required|string|max:100',
             'satuan'        => 'required|string|max:20',
             'harga_jual'    => 'required|numeric|min:0',
+            'harga_mbg'     => 'nullable|numeric|min:0',
             'stok_minimum'  => 'required|integer|min:0',
             'deskripsi'     => 'nullable|string',
         ]);
+
+        $validated['harga_mbg'] = $validated['harga_mbg'] ?? $validated['harga_jual'];
 
         $barang = Barang::create($validated);
         Stok::create(['barang_id' => $barang->id, 'jumlah' => 0, 'harga_rata' => 0]);
@@ -75,10 +78,13 @@ class BarangController extends Controller
             'kategori'     => 'required|string|max:100',
             'satuan'       => 'required|string|max:20',
             'harga_jual'   => 'required|numeric|min:0',
+            'harga_mbg'    => 'nullable|numeric|min:0',
             'stok_minimum' => 'required|integer|min:0',
             'deskripsi'    => 'nullable|string',
             'is_active'    => 'sometimes|boolean',
         ]);
+
+        $validated['harga_mbg'] = $validated['harga_mbg'] ?? $validated['harga_jual'];
 
         $validated['is_active'] = $request->boolean('is_active', true);
         $barang->update($validated);

@@ -17,7 +17,11 @@ class RoleMiddleware
 
         $user = Auth::user();
 
-        if (!in_array($user->role, $roles)) {
+        if ($user->isAdmin()) {
+            return $next($request);
+        }
+
+        if (! in_array($user->role, $roles)) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 

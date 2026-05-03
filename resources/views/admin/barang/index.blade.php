@@ -71,6 +71,7 @@
                         <th class="px-6 py-4 text-sm font-semibold text-neutral-600 dark:text-white">Kategori</th>
                         <th class="px-6 py-4 text-sm font-semibold text-neutral-600 dark:text-white">Satuan</th>
                         <th class="px-6 py-4 text-sm font-semibold text-neutral-600 dark:text-white">Harga Jual</th>
+                        <th class="px-6 py-4 text-sm font-semibold text-neutral-600 dark:text-white">Harga MBG</th>
                         <th class="px-6 py-4 text-sm font-semibold text-neutral-600 dark:text-white">Stok</th>
                         <th class="px-6 py-4 text-sm font-semibold text-neutral-600 dark:text-white">Status</th>
                         <th class="px-6 py-4 text-sm font-semibold text-neutral-600 dark:text-white text-end">Aksi</th>
@@ -92,6 +93,7 @@
                         <td class="px-6 py-4 text-sm text-secondary-light">{{ $item->kategori }}</td>
                         <td class="px-6 py-4 text-sm text-secondary-light">{{ $item->satuan }}</td>
                         <td class="px-6 py-4 text-sm font-medium dark:text-white">Rp {{ number_format($item->harga_jual, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4 text-sm font-medium text-primary-600">Rp {{ number_format($item->harga_mbg ?? $item->harga_jual, 0, ',', '.') }}</td>
                         <td class="px-6 py-4">
                             @php $stokJumlah = $item->stok?->jumlah ?? 0; @endphp
                             <span class="font-semibold {{ $stokJumlah <= $item->stok_minimum ? 'text-danger-600' : 'text-success-600' }}">
@@ -132,7 +134,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="text-center py-10 text-secondary-light">
+                        <td colspan="10" class="text-center py-10 text-secondary-light">
                             <iconify-icon icon="ri:inbox-line" class="text-4xl mb-2 block mx-auto"></iconify-icon>
                             <p class="mb-0">Belum ada data barang</p>
                         </td>

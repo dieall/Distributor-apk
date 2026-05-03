@@ -48,12 +48,17 @@
                     <td class="px-6 py-3.5 dark:text-white">{{ $item->keterangan }}</td>
                     <td class="px-6 py-3.5 text-right font-bold text-red-500">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
                     <td class="px-6 py-3.5 text-center">
-                        <form action="{{ route('admin.pengeluaran.destroy', $item) }}" method="POST" onsubmit="return confirm('Hapus pengeluaran ini?')">
-                            @csrf @method('DELETE')
-                            <button class="w-8 h-8 rounded-lg bg-red-100 text-red-500 hover:bg-red-200 inline-flex items-center justify-center" type="submit">
-                                <iconify-icon icon="ri:delete-bin-line"></iconify-icon>
-                            </button>
-                        </form>
+                        <div class="flex items-center justify-center gap-2">
+                            <a href="{{ route('admin.pengeluaran.show', $item) }}" class="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 hover:bg-primary-200 inline-flex items-center justify-center" title="Detail">
+                                <iconify-icon icon="ri:eye-line"></iconify-icon>
+                            </a>
+                            <form action="{{ route('admin.pengeluaran.destroy', $item) }}" method="POST" class="inline" onsubmit="return confirm('Hapus pengeluaran ini?')">
+                                @csrf @method('DELETE')
+                                <button class="w-8 h-8 rounded-lg bg-red-100 text-red-500 hover:bg-red-200 inline-flex items-center justify-center" type="submit" title="Hapus">
+                                    <iconify-icon icon="ri:delete-bin-line"></iconify-icon>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty

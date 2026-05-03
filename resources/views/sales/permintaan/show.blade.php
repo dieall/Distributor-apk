@@ -111,6 +111,7 @@
     </div>
     <form action="{{ route('sales.permintaan.ceklis', $permintaan) }}" method="POST">
         @csrf
+        @method('PATCH')
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
@@ -213,7 +214,7 @@
         <h6 class="font-semibold mb-0 text-primary-700 dark:text-white text-sm">Buat Surat Jalan</h6>
     </div>
     <div class="p-6">
-        <form action="{{ route('sales.permintaan.buatSuratJalan', $permintaan) }}" method="POST">
+        <form action="{{ route('sales.permintaan.surat-jalan', $permintaan) }}" method="POST">
             @csrf
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
                 <div>

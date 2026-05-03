@@ -11,8 +11,9 @@
     <link rel="stylesheet" href="{{ asset('assets/css/remixicon.css') }}">
     <!-- Main CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    @stack('styles')
 </head>
-<body class="bg-neutral-100 font-inter">
+<body class="dark:bg-neutral-800 bg-neutral-100 dark:text-white font-inter">
 
     @yield('content')
 

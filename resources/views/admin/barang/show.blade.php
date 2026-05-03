@@ -24,7 +24,7 @@
 
 {{-- Stats Bar --}}
 @php $stokJumlah = $barang->stok_jumlah ?? 0; @endphp
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
     <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-4 text-center">
         <p class="text-xs text-secondary-light font-medium mb-1">Stok Saat Ini</p>
         <p class="text-xl font-bold mb-0 {{ $barang->isStokRendah() ? 'text-red-500' : 'text-success-600' }}">{{ number_format($stokJumlah, 0, ',', '.') }}</p>
@@ -34,6 +34,11 @@
         <p class="text-xs text-secondary-light font-medium mb-1">Harga Jual</p>
         <p class="text-base font-bold text-success-600 mb-0">Rp {{ number_format($barang->harga_jual, 0, ',', '.') }}</p>
         <p class="text-xs text-secondary-light mb-0">per {{ $barang->satuan }}</p>
+    </div>
+    <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-4 text-center">
+        <p class="text-xs text-secondary-light font-medium mb-1">Harga MBG</p>
+        <p class="text-base font-bold text-primary-600 mb-0">Rp {{ number_format($barang->harga_mbg ?? $barang->harga_jual, 0, ',', '.') }}</p>
+        <p class="text-xs text-secondary-light mb-0">acuan pelanggan</p>
     </div>
     <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-4 text-center">
         <p class="text-xs text-secondary-light font-medium mb-1">Harga Rata-rata</p>

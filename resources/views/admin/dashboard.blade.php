@@ -336,15 +336,18 @@
 
 {{-- ===== ROW 6: Quick Access ===== --}}
 <h6 class="font-semibold mb-4 dark:text-white">Akses Cepat</h6>
-<div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 gap-4">
+<div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-9 gap-4">
     @php
     $quickLinks = [
         ['label'=>'Tambah Barang',    'sub'=>'Input produk baru',       'icon'=>'ri:box-3-line',             'bg'=>'bg-blue-100',    'color'=>'text-blue-600',    'href'=>route('admin.barang.create')],
+        ['label'=>'Data Supplier',    'sub'=>'PT / perusahaan',          'icon'=>'ri:building-4-line',        'bg'=>'bg-purple-100',  'color'=>'text-purple-600',  'href'=>route('admin.suppliers.index')],
         ['label'=>'Buat PO',          'sub'=>'Purchase order',          'icon'=>'ri:file-add-line',          'bg'=>'bg-indigo-100',  'color'=>'text-indigo-600',  'href'=>route('admin.pembelian.create')],
         ['label'=>'Pengeluaran',       'sub'=>'Input biaya harian',      'icon'=>'ri:wallet-3-line',          'bg'=>'bg-red-100',     'color'=>'text-red-600',     'href'=>route('admin.pengeluaran.create')],
         ['label'=>'Data Pembelian',   'sub'=>'Riwayat PO',              'icon'=>'ri:file-list-3-line',       'bg'=>'bg-primary-100', 'color'=>'text-primary-600', 'href'=>route('admin.pembelian.index')],
         ['label'=>'Daftar Barang',    'sub'=>'Kelola produk',           'icon'=>'ri:shopping-bag-3-line',    'bg'=>'bg-success-100', 'color'=>'text-success-600', 'href'=>route('admin.barang.index')],
         ['label'=>'Data Pengeluaran', 'sub'=>'Riwayat biaya',           'icon'=>'ri:receipt-line',           'bg'=>'bg-warning-100', 'color'=>'text-warning-600', 'href'=>route('admin.pengeluaran.index')],
+        ['label'=>'Surat Jalan',      'sub'=>'Buat & kelola pengiriman', 'icon'=>'ri:truck-line',              'bg'=>'bg-cyan-100',    'color'=>'text-cyan-600',    'href'=>route('admin.surat-jalan.index')],
+        ['label'=>'Invoice',          'sub'=>'Tagihan pelanggan',        'icon'=>'ri:bill-line',               'bg'=>'bg-teal-100',    'color'=>'text-teal-600',    'href'=>route('admin.invoice.index')],
     ];
     @endphp
     @foreach($quickLinks as $link)
@@ -372,11 +375,26 @@ $profitPenjualan  = json_encode(array_column($profitChart, 'penjualan'));
 $profitPembelian  = json_encode(array_column($profitChart, 'pembelian'));
 $profitPengeluaran= json_encode(array_column($profitChart, 'pengeluaran'));
 $profitKeuntungan = json_encode(array_column($profitChart, 'keuntungan'));
-$poStatusLabels   = json_encode(array_keys($poStatus));
-$poStatusValues   = json_encode(array_values($poStatus));
+$poStatusMap      = [
+    'draft' => (int) ($poStatus['draft'] ?? 0),
+    'dikirim' => (int) ($poStatus['dikirim'] ?? 0),
+    'sebagian_diterima' => (int) ($poStatus['sebagian_diterima'] ?? 0),
+    'diterima' => (int) ($poStatus['diterima'] ?? 0),
+    'dibatalkan' => (int) ($poStatus['dibatalkan'] ?? 0),
+];
 @endphp
 <script>
 // ====== Chart: Nilai Pembelian ======
+const renderChart = (selector, options) => {
+    const el = document.querySelector(selector);
+    if (!el || typeof ApexCharts === 'undefined') return;
+    try {
+        new ApexCharts(el, options).render();
+    } catch (err) {
+        console.error(`Gagal render chart ${selector}`, err);
+    }
+};
+
 const optPembelian = {
     chart: { type: 'area', height: 260, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
     series: [{ name: 'Nilai (Rp)', data: {!! $pembelianValues !!} }],
@@ -389,7 +407,7 @@ const optPembelian = {
     dataLabels: { enabled: false },
     grid: { borderColor: '#f1f5f9', padding: { left: 0, right: 0 } },
 };
-new ApexCharts(document.querySelector('#chart-pembelian'), optPembelian).render();
+renderChart('#chart-pembelian', optPembelian);
 
 // ====== Chart: Keuntungan ======
 const optProfit = {
@@ -408,14 +426,16 @@ const optProfit = {
     dataLabels: { enabled: false },
     grid: { borderColor: '#f1f5f9' },
 };
-new ApexCharts(document.querySelector('#chart-profit'), optProfit).render();
+renderChart('#chart-profit', optProfit);
 
 // ====== Chart: Status PO Donut ======
-const statusLabelsRaw = {!! $poStatusLabels !!};
+const poStatusMap = @json($poStatusMap);
+const statusLabelsRaw = ['draft', 'dikirim', 'sebagian_diterima', 'diterima', 'dibatalkan'];
+const statusSeries = statusLabelsRaw.map(key => Number(poStatusMap[key] || 0));
 const statusLabelsNice = statusLabelsRaw.map(s => s.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()));
 const optPO = {
     chart: { type: 'donut', height: 200, fontFamily: 'Inter, sans-serif' },
-    series: {!! $poStatusValues !!},
+    series: statusSeries,
     labels: statusLabelsNice,
     colors: ['#9CA3AF','#60A5FA','#FBBF24','#34D399','#F87171'],
     legend: { show: false },
@@ -423,7 +443,7 @@ const optPO = {
     plotOptions: { pie: { donut: { size: '65%' } } },
     tooltip: { y: { formatter: v => v + ' PO' } },
 };
-new ApexCharts(document.querySelector('#chart-po-status'), optPO).render();
+renderChart('#chart-po-status', optPO);
 
 // ====== Chart: Permintaan ======
 const optPermintaan = {
@@ -437,6 +457,6 @@ const optPermintaan = {
     grid: { borderColor: '#f1f5f9' },
     tooltip: { y: { formatter: v => v + ' permintaan' } },
 };
-new ApexCharts(document.querySelector('#chart-permintaan'), optPermintaan).render();
+renderChart('#chart-permintaan', optPermintaan);
 </script>
 @endpush

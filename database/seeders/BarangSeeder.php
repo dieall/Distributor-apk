@@ -51,12 +51,21 @@ class BarangSeeder extends Seeder
         ];
 
         foreach ($items as $item) {
-            $barang = Barang::create(array_merge($item, ['deskripsi' => null, 'is_active' => true]));
-            Stok::create([
-                'barang_id'  => $barang->id,
-                'jumlah'     => rand(5, 100),
-                'harga_rata' => $item['harga_jual'] * 0.75,
-            ]);
+            $barang = Barang::updateOrCreate(
+                ['kode' => $item['kode']],
+                array_merge($item, [
+                    'deskripsi' => null,
+                    'is_active' => true,
+                    'harga_mbg' => $item['harga_jual'],
+                ])
+            );
+            Stok::updateOrCreate(
+                ['barang_id' => $barang->id],
+                [
+                    'jumlah'     => 80,
+                    'harga_rata' => round((float) $item['harga_jual'] * 0.75, 2),
+                ]
+            );
         }
     }
 }

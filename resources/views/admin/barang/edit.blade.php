@@ -82,6 +82,17 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Harga MBG <span class="text-neutral-400 font-normal text-xs">(admin)</span></label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-neutral-500 font-medium">Rp</span>
+                        <input type="text" name="harga_mbg" value="{{ old('harga_mbg', $barang->harga_mbg ?? $barang->harga_jual) }}" placeholder="Opsional"
+                            class="input-ribuan w-full pl-12 pr-3.5 py-2.5 rounded-lg border text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 border-neutral-300 dark:border-neutral-500">
+                    </div>
+                    <p class="text-neutral-400 text-xs mt-1">Ditampilkan ke pelanggan saat buat permintaan.</p>
+                    @error('harga_mbg')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+
+                <div>
                     <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Stok Minimum <span class="text-red-500">*</span></label>
                     <input type="number" name="stok_minimum" value="{{ old('stok_minimum', $barang->stok_minimum) }}" min="0" required
                         class="w-full px-3.5 py-2.5 rounded-lg border text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 border-neutral-300 dark:border-neutral-500">
