@@ -12,7 +12,7 @@
     </div>
     <ul class="flex items-center gap-[6px]">
         <li class="font-medium">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 hover:text-primary-600">
+            <a href="{{ dashboard_home_route() }}" class="flex items-center gap-2 hover:text-primary-600">
                 <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
                 Dashboard
             </a>
@@ -23,7 +23,7 @@
 </div>
 
 {{-- ===== ROW 1: KPI Cards ===== --}}
-<div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
     @php
     $kpis = [
@@ -31,8 +31,6 @@
         ['label'=>'PO Bulan Ini',       'value'=>$stats['po_bulan_ini'],       'icon'=>'ri:file-list-3-line',   'bg'=>'bg-indigo-100',  'color'=>'text-indigo-600'],
         ['label'=>'Permintaan Pending', 'value'=>$stats['permintaan_pending'], 'icon'=>'ri:time-line',          'bg'=>'bg-warning-100', 'color'=>'text-warning-600'],
         ['label'=>'Stok Rendah',        'value'=>$stats['stok_rendah'],        'icon'=>'ri:alert-line',         'bg'=>'bg-red-100',     'color'=>'text-red-600'],
-        ['label'=>'Supplier',           'value'=>$stats['total_supplier'],     'icon'=>'ri:truck-line',         'bg'=>'bg-purple-100',  'color'=>'text-purple-600'],
-        ['label'=>'Pelanggan',          'value'=>$stats['total_pelanggan'],    'icon'=>'ri:user-heart-line',    'bg'=>'bg-pink-100',    'color'=>'text-pink-600'],
     ];
     @endphp
 
@@ -208,7 +206,7 @@
                 <iconify-icon icon="ri:alert-line" class="text-red-500 text-lg"></iconify-icon>
                 <h6 class="font-semibold mb-0 dark:text-white text-sm">Peringatan Stok Rendah</h6>
             </div>
-            <a href="{{ route('admin.barang.index') }}" class="text-xs text-primary-600 hover:underline">Lihat semua</a>
+            <a href="{{ dash_route('admin.barang.index') }}" class="text-xs text-primary-600 hover:underline">Lihat semua</a>
         </div>
         @if($stokRendah->isEmpty())
         <div class="p-10 text-center">
@@ -230,9 +228,9 @@
                     </div>
                     <div class="text-right">
                         <p class="font-bold text-sm {{ $item->jumlah == 0 ? 'text-red-500' : 'text-warning-600' }} mb-0">
-                            {{ number_format($item->jumlah, 0, ',', '.') }} {{ $item->satuan }}
+                            {{ format_qty_id($item->jumlah) }} {{ $item->satuan }}
                         </p>
-                        <p class="text-xs text-secondary-light mb-0">min: {{ $item->stok_minimum }}</p>
+                        <p class="text-xs text-secondary-light mb-0">min: {{ format_qty_id($item->stok_minimum) }}</p>
                     </div>
                 </div>
                 <div class="w-full bg-neutral-200 dark:bg-neutral-600 rounded-full h-1.5">
@@ -256,7 +254,7 @@
                 <iconify-icon icon="ri:file-list-3-line" class="text-primary-600 text-lg"></iconify-icon>
                 <h6 class="font-semibold mb-0 dark:text-white text-sm">PO Terbaru</h6>
             </div>
-            <a href="{{ route('admin.pembelian.index') }}" class="text-xs text-primary-600 hover:underline">Lihat semua</a>
+            <a href="{{ dash_route('admin.pembelian.index') }}" class="text-xs text-primary-600 hover:underline">Lihat semua</a>
         </div>
         <div class="divide-y divide-neutral-100 dark:divide-neutral-600">
             @forelse($recentPO as $po)
@@ -334,20 +332,21 @@
 
 </div>
 
-{{-- ===== ROW 6: Quick Access ===== --}}
+@unless(auth()->user()->isPurchasing())
+{{-- ===== ROW 6: Quick Access (disembunyikan untuk purchasing) ===== --}}
 <h6 class="font-semibold mb-4 dark:text-white">Akses Cepat</h6>
 <div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-9 gap-4">
     @php
     $quickLinks = [
-        ['label'=>'Tambah Barang',    'sub'=>'Input produk baru',       'icon'=>'ri:box-3-line',             'bg'=>'bg-blue-100',    'color'=>'text-blue-600',    'href'=>route('admin.barang.create')],
-        ['label'=>'Data Supplier',    'sub'=>'PT / perusahaan',          'icon'=>'ri:building-4-line',        'bg'=>'bg-purple-100',  'color'=>'text-purple-600',  'href'=>route('admin.suppliers.index')],
-        ['label'=>'Buat PO',          'sub'=>'Purchase order',          'icon'=>'ri:file-add-line',          'bg'=>'bg-indigo-100',  'color'=>'text-indigo-600',  'href'=>route('admin.pembelian.create')],
-        ['label'=>'Pengeluaran',       'sub'=>'Input biaya harian',      'icon'=>'ri:wallet-3-line',          'bg'=>'bg-red-100',     'color'=>'text-red-600',     'href'=>route('admin.pengeluaran.create')],
-        ['label'=>'Data Pembelian',   'sub'=>'Riwayat PO',              'icon'=>'ri:file-list-3-line',       'bg'=>'bg-primary-100', 'color'=>'text-primary-600', 'href'=>route('admin.pembelian.index')],
-        ['label'=>'Daftar Barang',    'sub'=>'Kelola produk',           'icon'=>'ri:shopping-bag-3-line',    'bg'=>'bg-success-100', 'color'=>'text-success-600', 'href'=>route('admin.barang.index')],
-        ['label'=>'Data Pengeluaran', 'sub'=>'Riwayat biaya',           'icon'=>'ri:receipt-line',           'bg'=>'bg-warning-100', 'color'=>'text-warning-600', 'href'=>route('admin.pengeluaran.index')],
-        ['label'=>'Surat Jalan',      'sub'=>'Buat & kelola pengiriman', 'icon'=>'ri:truck-line',              'bg'=>'bg-cyan-100',    'color'=>'text-cyan-600',    'href'=>route('admin.surat-jalan.index')],
-        ['label'=>'Invoice',          'sub'=>'Tagihan pelanggan',        'icon'=>'ri:bill-line',               'bg'=>'bg-teal-100',    'color'=>'text-teal-600',    'href'=>route('admin.invoice.index')],
+        ['label'=>'Tambah Barang',    'sub'=>'Input produk baru',       'icon'=>'ri:box-3-line',             'bg'=>'bg-blue-100',    'color'=>'text-blue-600',    'href'=>dash_route('admin.barang.create')],
+        ['label'=>'Data Supplier',    'sub'=>'Nama PT (tanpa login)',    'icon'=>'ri:building-4-line',        'bg'=>'bg-purple-100',  'color'=>'text-purple-600',  'href'=>dash_route('admin.suppliers.index')],
+        ['label'=>'Buat PO',          'sub'=>'Purchase order',          'icon'=>'ri:file-add-line',          'bg'=>'bg-indigo-100',  'color'=>'text-indigo-600',  'href'=>dash_route('admin.pembelian.create')],
+        ['label'=>'Pengeluaran',       'sub'=>'Input biaya harian',      'icon'=>'ri:wallet-3-line',          'bg'=>'bg-red-100',     'color'=>'text-red-600',     'href'=>dash_route('admin.pengeluaran.create')],
+        ['label'=>'Data Pembelian',   'sub'=>'Riwayat PO',              'icon'=>'ri:file-list-3-line',       'bg'=>'bg-primary-100', 'color'=>'text-primary-600', 'href'=>dash_route('admin.pembelian.index')],
+        ['label'=>'Daftar Barang',    'sub'=>'Kelola produk',           'icon'=>'ri:shopping-bag-3-line',    'bg'=>'bg-success-100', 'color'=>'text-success-600', 'href'=>dash_route('admin.barang.index')],
+        ['label'=>'Data Pengeluaran', 'sub'=>'Riwayat biaya',           'icon'=>'ri:receipt-line',           'bg'=>'bg-warning-100', 'color'=>'text-warning-600', 'href'=>dash_route('admin.pengeluaran.index')],
+        ['label'=>'Surat Jalan',      'sub'=>'Buat & kelola pengiriman', 'icon'=>'ri:truck-line',              'bg'=>'bg-cyan-100',    'color'=>'text-cyan-600',    'href'=>dash_route('gudang.surat-jalan.index')],
+        ['label'=>'Invoice',          'sub'=>'Tagihan pelanggan',        'icon'=>'ri:bill-line',               'bg'=>'bg-teal-100',    'color'=>'text-teal-600',    'href'=>dash_route('admin.invoice.index')],
     ];
     @endphp
     @foreach($quickLinks as $link)
@@ -360,6 +359,7 @@
     </a>
     @endforeach
 </div>
+@endunless
 
 @endsection
 

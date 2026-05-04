@@ -9,7 +9,7 @@ class Pembelian extends Model {
     protected $fillable = ['no_po','supplier_id','dibuat_oleh','tanggal','tanggal_kirim_estimasi','status','total','catatan','bukti_pembayaran'];
     protected $casts = ['tanggal' => 'date', 'tanggal_kirim_estimasi' => 'date', 'total' => 'decimal:2'];
 
-    public function supplier(): BelongsTo { return $this->belongsTo(User::class, 'supplier_id'); }
+    public function supplier(): BelongsTo { return $this->belongsTo(Supplier::class, 'supplier_id'); }
     public function dibuatOleh(): BelongsTo { return $this->belongsTo(User::class, 'dibuat_oleh'); }
     public function detail(): HasMany { return $this->hasMany(PembelianDetail::class); }
     public function penerimaan(): HasMany { return $this->hasMany(PenerimaanBarang::class); }

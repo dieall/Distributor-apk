@@ -5,7 +5,7 @@
 <div class="flex flex-wrap items-center justify-between gap-2 mb-6">
     <div>
         <h6 class="font-semibold mb-0 dark:text-white">Data Supplier</h6>
-        <p class="text-secondary-light text-sm mb-0 mt-1">Kelola perusahaan supplier &mdash; hanya admin yang dapat menambah atau mengubah akun ini.</p>
+        <p class="text-secondary-light text-sm mb-0 mt-1">Daftar nama PT / supplier untuk PO. Hanya admin yang dapat menambah atau mengubah.</p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
         <a href="{{ route('admin.suppliers.create') }}" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium flex items-center gap-2">
@@ -21,7 +21,7 @@
         <form method="GET" class="flex flex-wrap gap-3 items-end">
             <div class="flex-1 min-w-[200px]">
                 <label class="text-sm font-medium mb-1 block dark:text-white">Cari</label>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama, email, telepon..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama PT..."
                     class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white">
             </div>
             <button type="submit" class="px-4 py-2.5 rounded-lg bg-neutral-900 dark:bg-primary-600 text-white text-sm font-medium">Cari</button>
@@ -35,26 +35,14 @@
             <thead>
                 <tr class="bg-neutral-50 dark:bg-neutral-800">
                     <th class="text-left px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Nama / PT</th>
-                    <th class="text-left px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Email</th>
-                    <th class="text-left px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Telepon</th>
-                    <th class="text-center px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Status</th>
                     <th class="text-center px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Aksi</th>
                 </tr>
             </thead>
-            
+
             <tbody class="divide-y divide-neutral-100 dark:divide-neutral-600">
                 @forelse($suppliers as $item)
                 <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-600/50">
                     <td class="px-6 py-3.5 font-semibold dark:text-white">{{ $item->name }}</td>
-                    <td class="px-6 py-3.5 dark:text-white">{{ $item->email }}</td>
-                    <td class="px-6 py-3.5 dark:text-white">{{ $item->phone ?? '—' }}</td>
-                    <td class="px-6 py-3.5 text-center">
-                        @if($item->is_active)
-                        <span class="px-2.5 py-1 rounded-full bg-success-100 text-success-700 text-xs font-semibold">Aktif</span>
-                        @else
-                        <span class="px-2.5 py-1 rounded-full bg-neutral-200 text-neutral-600 text-xs font-semibold">Nonaktif</span>
-                        @endif
-                    </td>
                     <td class="px-6 py-3.5 text-center">
                         <div class="flex items-center justify-center gap-2">
                             <a href="{{ route('admin.suppliers.edit', $item) }}" class="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 hover:bg-primary-200 inline-flex items-center justify-center" title="Ubah">
@@ -70,7 +58,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="5" class="px-6 py-10 text-center text-secondary-light">Belum ada supplier. Tambahkan PT / supplier dari tombol di atas.</td></tr>
+                <tr><td colspan="2" class="px-6 py-10 text-center text-secondary-light">Belum ada supplier. Tambahkan PT dari tombol di atas.</td></tr>
                 @endforelse
             </tbody>
         </table>

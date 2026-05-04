@@ -7,7 +7,7 @@
         <h6 class="font-semibold mb-0 dark:text-white">Surat Jalan</h6>
         <p class="text-secondary-light text-sm mb-0 mt-1">Kelola surat pengiriman barang ke pelanggan</p>
     </div>
-    <a href="{{ route('admin.surat-jalan.create') }}" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium flex items-center gap-2">
+    <a href="{{ route('gudang.surat-jalan.create') }}" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium flex items-center gap-2">
         <iconify-icon icon="ri:add-line"></iconify-icon> Buat Surat Jalan
     </a>
 </div>
@@ -28,7 +28,7 @@
             <option value="selesai" {{ request('status')=='selesai' ? 'selected' : '' }}>Selesai</option>
         </select>
         <button type="submit" class="px-4 py-2.5 rounded-lg bg-neutral-900 dark:bg-primary-600 text-white text-sm font-medium">Filter</button>
-        <a href="{{ route('admin.surat-jalan.index') }}" class="px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm text-neutral-600 dark:text-neutral-200 hover:bg-neutral-100">Reset</a>
+        <a href="{{ route('gudang.surat-jalan.index') }}" class="px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm text-neutral-600 dark:text-neutral-200 hover:bg-neutral-100">Reset</a>
     </form>
 </div>
 
@@ -65,10 +65,10 @@
                     </td>
                     <td class="px-5 py-3.5 text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <a href="{{ route('admin.surat-jalan.show', $sj) }}" class="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 hover:bg-primary-200 inline-flex items-center justify-center" title="Detail">
+                            <a href="{{ route('gudang.surat-jalan.show', $sj) }}" class="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 hover:bg-primary-200 inline-flex items-center justify-center" title="Detail">
                                 <iconify-icon icon="ri:eye-line"></iconify-icon>
                             </a>
-                            <a href="{{ route('admin.surat-jalan.print', $sj) }}" target="_blank" class="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-600 dark:text-neutral-200 inline-flex items-center justify-center" title="Cetak">
+                            <a href="{{ route('gudang.surat-jalan.print', $sj) }}" target="_blank" class="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-600 dark:text-neutral-200 inline-flex items-center justify-center" title="Cetak">
                                 <iconify-icon icon="ri:printer-line"></iconify-icon>
                             </a>
                         </div>

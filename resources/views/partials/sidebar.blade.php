@@ -3,10 +3,10 @@
         <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
     </button>
     <div>
-        <a href="#" class="sidebar-logo">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="light-logo">
-            <img src="{{ asset('assets/images/logo-light.png') }}" alt="Logo" class="dark-logo">
-            <img src="{{ asset('assets/images/logo-icon.png') }}" alt="Logo" class="logo-icon">
+        <a href="{{ url('/') }}" class="sidebar-logo flex w-full items-center justify-center gap-2">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Area Group Sejahtera" class="light-logo h-auto w-auto max-h-12 max-w-full object-contain object-center">
+            <img src="{{ asset('assets/images/logo-light.png') }}" alt="Area Group Sejahtera" class="dark-logo h-auto w-auto max-h-12 max-w-full object-contain object-center">
+            <img src="{{ asset('assets/images/logo-icon.png') }}" alt="" class="logo-icon h-auto w-auto max-h-12 object-contain">
         </a>
     </div>
     <div class="sidebar-menu-area">
@@ -56,12 +56,6 @@
                 </li>
 
                 <li class="sidebar-menu-group-title">Pengiriman &amp; Tagihan</li>
-                <li class="{{ request()->routeIs('admin.surat-jalan.*') ? 'active-page' : '' }}">
-                    <a href="{{ route('admin.surat-jalan.index') }}">
-                        <iconify-icon icon="ri:truck-line" class="menu-icon"></iconify-icon>
-                        <span>Surat Jalan</span>
-                    </a>
-                </li>
                 <li class="{{ request()->routeIs('admin.invoice.*') ? 'active-page' : '' }}">
                     <a href="{{ route('admin.invoice.index') }}">
                         <iconify-icon icon="ri:bill-line" class="menu-icon"></iconify-icon>
@@ -80,7 +74,7 @@
                     </a>
                 </li>
 
-                <li class="sidebar-menu-group-title">{{ $isAdmin ? 'Stok &amp; Penerimaan' : 'Manajemen Gudang' }}</li>
+                <li class="sidebar-menu-group-title">{{ $isAdmin ? 'Stok & Penerimaan' : 'Manajemen Gudang' }}</li>
                 <li class="{{ request()->routeIs('gudang.stok.*') ? 'active-page' : '' }}">
                     <a href="{{ route('gudang.stok.index') }}">
                         <iconify-icon icon="ri:store-2-line" class="menu-icon"></iconify-icon>
@@ -91,6 +85,18 @@
                     <a href="{{ route('gudang.penerimaan.index') }}">
                         <iconify-icon icon="ri:inbox-archive-line" class="menu-icon"></iconify-icon>
                         <span>Penerimaan Barang</span>
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('gudang.pengeluaran-barang.*') ? 'active-page' : '' }}">
+                    <a href="{{ route('gudang.pengeluaran-barang.index') }}">
+                        <iconify-icon icon="ri:logout-box-r-line" class="menu-icon"></iconify-icon>
+                        <span>Pengeluaran Barang</span>
+                    </a>
+                </li>
+                <li class="{{ request()->routeIs('gudang.surat-jalan.*') ? 'active-page' : '' }}">
+                    <a href="{{ route('gudang.surat-jalan.index') }}">
+                        <iconify-icon icon="ri:truck-line" class="menu-icon"></iconify-icon>
+                        <span>Surat Jalan</span>
                     </a>
                 </li>
             @endif
@@ -105,7 +111,7 @@
                     </a>
                 </li>
 
-                <li class="sidebar-menu-group-title">{{ $isAdmin ? 'Permintaan &amp; Kirim' : 'Distribusi' }}</li>
+                <li class="sidebar-menu-group-title">{{ $isAdmin ? 'Permintaan & Kirim' : 'Distribusi' }}</li>
                 <li class="{{ request()->routeIs('sales.permintaan.*') ? 'active-page' : '' }}">
                     <a href="{{ route('sales.permintaan.index') }}">
                         <iconify-icon icon="ri:file-list-3-line" class="menu-icon"></iconify-icon>
@@ -126,13 +132,29 @@
                 </li>
             @endif
 
-            {{-- ===== SUPPLIER ===== --}}
-            @if($isAdmin || $role === 'supplier')
-                <li class="sidebar-menu-group-title">{{ $isAdmin ? 'Akses Supplier' : 'Menu Utama' }}</li>
-                <li class="{{ request()->routeIs('supplier.dashboard') ? 'active-page' : '' }}">
-                    <a href="{{ route('supplier.dashboard') }}">
+            {{-- ===== PURCHASING ===== --}}
+            @if($role === 'purchasing')
+                <li class="sidebar-menu-group-title">Purchasing</li>
+                <li class="{{ request()->routeIs('purchasing.dashboard') ? 'active-page' : '' }}">
+                    <a href="{{ route('purchasing.dashboard') }}">
                         <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
-                        <span>{{ $isAdmin ? 'Dashboard Supplier' : 'Dashboard' }}</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-menu-group-title">PO &amp; pembayaran</li>
+                <li class="{{ request()->routeIs('purchasing.pembelian.*') ? 'active-page' : '' }}">
+                    <a href="{{ route('purchasing.pembelian.index') }}">
+                        <iconify-icon icon="ri:shopping-cart-2-line" class="menu-icon"></iconify-icon>
+                        <span>Purchase Order</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-menu-group-title">Pembayaran pengeluaran</li>
+                <li class="{{ request()->routeIs('purchasing.pengeluaran.*') ? 'active-page' : '' }}">
+                    <a href="{{ route('purchasing.pengeluaran.index') }}">
+                        <iconify-icon icon="ri:wallet-3-line" class="menu-icon"></iconify-icon>
+                        <span>Pengeluaran</span>
                     </a>
                 </li>
             @endif

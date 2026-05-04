@@ -68,6 +68,16 @@ class PermintaanController extends Controller
             }
         });
 
+        // Notifikasi ke semua sales: ada permintaan baru
+        notif_kirim_ke_role(
+            'sales',
+            'Permintaan baru masuk',
+            'Pelanggan ' . auth()->user()->name . ' mengirim permintaan barang.',
+            '',
+            'ri:file-list-3-line',
+            'primary'
+        );
+
         return redirect()->route('pelanggan.permintaan.index')
             ->with('success', 'Permintaan barang berhasil dikirim.');
     }

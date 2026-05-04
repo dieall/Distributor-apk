@@ -27,7 +27,7 @@
 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
     <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-4 text-center">
         <p class="text-xs text-secondary-light font-medium mb-1">Stok Saat Ini</p>
-        <p class="text-xl font-bold mb-0 {{ $barang->isStokRendah() ? 'text-red-500' : 'text-success-600' }}">{{ number_format($stokJumlah, 0, ',', '.') }}</p>
+        <p class="text-xl font-bold mb-0 {{ $barang->isStokRendah() ? 'text-red-500' : 'text-success-600' }}">{{ format_qty_id($stokJumlah) }}</p>
         <p class="text-xs text-secondary-light mb-0">{{ $barang->satuan }}</p>
     </div>
     <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-4 text-center">
@@ -103,8 +103,8 @@
         <div class="flex items-center gap-4">
             <span class="text-xs text-secondary-light">{{ $barang->stokMutasi->count() }} transaksi</span>
             @php $totalMasuk = $barang->stokMutasi->where('tipe','masuk')->sum('jumlah'); $totalKeluar = $barang->stokMutasi->where('tipe','keluar')->sum('jumlah'); @endphp
-            <span class="text-xs font-medium text-success-600">+{{ number_format($totalMasuk,0,',','.') }} masuk</span>
-            <span class="text-xs font-medium text-red-500">-{{ number_format($totalKeluar,0,',','.') }} keluar</span>
+            <span class="text-xs font-medium text-success-600">+{{ format_qty_id($totalMasuk) }} masuk</span>
+            <span class="text-xs font-medium text-red-500">-{{ format_qty_id($totalKeluar) }} keluar</span>
         </div>
     </div>
     <div class="overflow-x-auto">
@@ -138,7 +138,7 @@
                         @endif
                     </td>
                     <td class="px-5 py-3.5 text-right font-bold dark:text-white whitespace-nowrap">
-                        {{ number_format($m->jumlah, 0, ',', '.') }} <span class="text-xs font-normal text-secondary-light">{{ $barang->satuan }}</span>
+                        {{ format_qty_id($m->jumlah) }} <span class="text-xs font-normal text-secondary-light">{{ $barang->satuan }}</span>
                     </td>
                     <td class="px-5 py-3.5 text-right text-xs text-secondary-light whitespace-nowrap">Rp {{ number_format($m->harga_satuan, 0, ',', '.') }}</td>
                     <td class="px-5 py-3.5 text-xs {{ $m->referensi ? 'text-primary-600 font-semibold' : 'text-neutral-400' }}">{{ $m->referensi ?? '—' }}</td>

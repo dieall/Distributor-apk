@@ -97,7 +97,7 @@
                         <td class="px-6 py-4">
                             @php $stokJumlah = $item->stok?->jumlah ?? 0; @endphp
                             <span class="font-semibold {{ $stokJumlah <= $item->stok_minimum ? 'text-danger-600' : 'text-success-600' }}">
-                                {{ number_format($stokJumlah, 0, ',', '.') }}
+                                {{ format_qty_id($stokJumlah) }}
                             </span>
                             <span class="text-secondary-light text-xs"> {{ $item->satuan }}</span>
                             @if($stokJumlah <= $item->stok_minimum)

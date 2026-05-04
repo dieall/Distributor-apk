@@ -11,7 +11,7 @@
         <span class="px-3 py-1.5 rounded-lg bg-{{ $pembelian->status_color }}-100 text-{{ $pembelian->status_color }}-600 text-sm font-semibold">
             {{ $pembelian->status_label }}
         </span>
-        <a href="{{ route('admin.pembelian.index') }}"
+        <a href="{{ fin_route('pembelian.index') }}"
             class="px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 transition flex items-center gap-1.5">
             <iconify-icon icon="ri:arrow-left-line"></iconify-icon> Kembali
         </a>
@@ -114,7 +114,7 @@
                         <p class="font-semibold text-sm dark:text-white mb-0">{{ $d->barang->nama }}</p>
                         <p class="text-xs text-secondary-light mb-0">{{ $d->barang->kode }}</p>
                     </td>
-                    <td class="px-6 py-3.5 text-right text-sm dark:text-white">{{ number_format($d->jumlah, 0, ',', '.') }} {{ $d->barang->satuan }}</td>
+                    <td class="px-6 py-3.5 text-right text-sm dark:text-white">{{ format_qty_id($d->jumlah) }} {{ $d->barang->satuan }}</td>
                     <td class="px-6 py-3.5 text-right text-sm text-secondary-light">Rp {{ number_format($d->harga_satuan, 0, ',', '.') }}</td>
                     <td class="px-6 py-3.5 text-right font-bold text-sm dark:text-white">Rp {{ number_format($d->subtotal, 0, ',', '.') }}</td>
                 </tr>
@@ -139,7 +139,7 @@
             <h6 class="font-semibold mb-0 dark:text-white text-sm">Update Status</h6>
         </div>
         <div class="p-6">
-            <form action="{{ route('admin.pembelian.status', $pembelian) }}" method="POST" class="flex items-end gap-3">
+            <form action="{{ fin_route('pembelian.status', $pembelian) }}" method="POST" class="flex items-end gap-3">
                 @csrf @method('PATCH')
                 <div class="flex-1">
                     <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Status Baru</label>

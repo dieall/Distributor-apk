@@ -51,9 +51,9 @@ class User extends Authenticatable
         return $this->role === 'sales';
     }
 
-    public function isSupplier(): bool
+    public function isPurchasing(): bool
     {
-        return $this->role === 'supplier';
+        return $this->role === 'purchasing';
     }
 
     public function isPelanggan(): bool
@@ -66,9 +66,9 @@ class User extends Authenticatable
         return match($this->role) {
             'admin'     => 'Administrator',
             'gudang'    => 'Gudang',
-            'sales'     => 'Sales',
-            'supplier'  => 'Supplier',
-            'pelanggan' => 'Pelanggan',
+            'sales'      => 'Sales',
+            'purchasing' => 'Purchasing',
+            'pelanggan'  => 'Pelanggan',
             default     => ucfirst($this->role),
         };
     }
@@ -78,9 +78,9 @@ class User extends Authenticatable
         return match($this->role) {
             'admin'     => 'admin.dashboard',
             'gudang'    => 'gudang.dashboard',
-            'sales'     => 'sales.dashboard',
-            'supplier'  => 'supplier.dashboard',
-            'pelanggan' => 'pelanggan.dashboard',
+            'sales'      => 'sales.dashboard',
+            'purchasing' => 'purchasing.dashboard',
+            'pelanggan'  => 'pelanggan.dashboard',
             default     => 'login',
         };
     }

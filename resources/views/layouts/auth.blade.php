@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Login') - Distributor APK</title>
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/favicon.png') }}" sizes="16x16">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}" sizes="16x16">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <!-- Remix Icon -->

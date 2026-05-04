@@ -40,7 +40,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <button type="submit" class="btn btn-primary btn-sm px-4 py-2">Filter</button>
-                <a href="{{ route('admin.pembelian.create') }}" class="btn btn-success btn-sm px-4 py-2 flex items-center gap-2">
+                <a href="{{ fin_route('pembelian.create') }}" class="btn btn-success btn-sm px-4 py-2 flex items-center gap-2">
                     <iconify-icon icon="ri:add-line"></iconify-icon> Buat PO
                 </a>
             </div>
@@ -71,7 +71,6 @@
                         </td>
                         <td class="px-6 py-4">
                             <p class="font-medium text-sm mb-0 dark:text-white">{{ $po->supplier->name }}</p>
-                            <p class="text-secondary-light text-xs mb-0">{{ $po->supplier->email }}</p>
                         </td>
                         <td class="px-6 py-4 text-sm text-secondary-light">{{ $po->tanggal->format('d M Y') }}</td>
                         <td class="px-6 py-4 text-sm text-secondary-light">{{ $po->tanggal_kirim_estimasi?->format('d M Y') ?? '-' }}</td>
@@ -82,7 +81,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-end">
-                            <a href="{{ route('admin.pembelian.show', $po) }}" class="btn btn-outline-primary btn-sm px-3 py-2 flex items-center gap-1 radius-6 inline-flex">
+                            <a href="{{ fin_route('pembelian.show', $po) }}" class="btn btn-outline-primary btn-sm px-3 py-2 flex items-center gap-1 radius-6 inline-flex">
                                 <iconify-icon icon="ri:eye-line"></iconify-icon> Detail
                             </a>
                         </td>

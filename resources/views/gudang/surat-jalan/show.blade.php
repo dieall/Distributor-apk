@@ -10,15 +10,17 @@
     <div class="flex items-center gap-2 flex-wrap">
         @php $c = ['dibuat'=>'warning','dikirim'=>'info','selesai'=>'success'][$suratJalan->status] ?? 'secondary'; @endphp
         <span class="px-3 py-1.5 rounded-lg bg-{{ $c }}-100 text-{{ $c }}-700 text-sm font-semibold">{{ $suratJalan->status_label }}</span>
-        <a href="{{ route('admin.surat-jalan.print', $suratJalan) }}" target="_blank"
+        <a href="{{ route('gudang.surat-jalan.print', $suratJalan) }}" target="_blank"
             class="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-900 text-white text-sm font-medium flex items-center gap-2">
             <iconify-icon icon="ri:printer-line"></iconify-icon> Cetak
         </a>
+        @if(auth()->user()->isAdmin())
         <a href="{{ route('admin.invoice.show', $suratJalan->permintaan) }}"
             class="px-4 py-2 rounded-lg bg-success-600 hover:bg-success-700 text-white text-sm font-medium flex items-center gap-2">
             <iconify-icon icon="ri:bill-line"></iconify-icon> Lihat Invoice
         </a>
-        <a href="{{ route('admin.surat-jalan.index') }}"
+        @endif
+        <a href="{{ route('gudang.surat-jalan.index') }}"
             class="px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 flex items-center gap-2">
             <iconify-icon icon="ri:arrow-left-line"></iconify-icon> Kembali
         </a>
@@ -79,7 +81,7 @@
     {{-- Update Status --}}
     <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6 w-full">
         <p class="text-xs font-semibold text-secondary-light uppercase tracking-wide mb-3">Update Status</p>
-        <form action="{{ route('admin.surat-jalan.status', $suratJalan) }}" method="POST" class="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-3">
+        <form action="{{ route('gudang.surat-jalan.status', $suratJalan) }}" method="POST" class="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-3">
             @csrf @method('PATCH')
             <div class="w-full sm:w-auto sm:min-w-[220px]">
                 <select name="status" class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
@@ -124,7 +126,7 @@
                             <p class="font-semibold text-sm dark:text-white mb-0">{{ $d->barang->nama }}</p>
                             <p class="text-xs text-secondary-light mb-0">{{ $d->barang->kode }}</p>
                         </td>
-                        <td class="px-5 py-3 text-right text-sm dark:text-white whitespace-nowrap">{{ number_format($d->jumlah,0,',','.') }} {{ $d->barang->satuan }}</td>
+                        <td class="px-5 py-3 text-right text-sm dark:text-white whitespace-nowrap">{{ format_qty_id($d->jumlah) }} {{ $d->barang->satuan }}</td>
                         <td class="px-5 py-3 text-right text-sm dark:text-white whitespace-nowrap">Rp {{ number_format($harga,0,',','.') }}</td>
                         <td class="px-5 py-3 text-right font-bold text-success-600 whitespace-nowrap">Rp {{ number_format($sub,0,',','.') }}</td>
                     </tr>

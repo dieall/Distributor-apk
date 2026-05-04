@@ -98,6 +98,16 @@ class PenerimaanController extends Controller
             Pembelian::find($request->pembelian_id)->update(['status' => 'diterima']);
         });
 
+        // Notif admin: stok bertambah dari penerimaan
+        notif_kirim_ke_role(
+            'admin',
+            'Penerimaan barang dicatat',
+            'Gudang mencatat penerimaan dari PO ' . (optional(\App\Models\Pembelian::find($request->pembelian_id))->no_po ?? '-') . '. Stok sudah diperbarui.',
+            '',
+            'ri:inbox-archive-line',
+            'success'
+        );
+
         return redirect()->route('gudang.penerimaan.index')
             ->with('success', 'Penerimaan barang berhasil dicatat.');
     }

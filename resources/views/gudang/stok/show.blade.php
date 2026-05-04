@@ -18,7 +18,7 @@
     @php $stokJml = $barang->stok?->jumlah ?? 0; @endphp
     <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-4 text-center">
         <p class="text-xs text-secondary-light font-medium mb-1">Stok Saat Ini</p>
-        <h4 class="font-bold text-2xl mb-1 {{ $stokJml <= $barang->stok_minimum ? 'text-red-500' : 'text-success-600' }}">{{ number_format($stokJml, 0, ',', '.') }}</h4>
+        <h4 class="font-bold text-2xl mb-1 {{ $stokJml <= $barang->stok_minimum ? 'text-red-500' : 'text-success-600' }}">{{ format_qty_id($stokJml) }}</h4>
         <p class="text-xs text-secondary-light mb-0">{{ $barang->satuan }}</p>
     </div>
     <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-4 text-center">
@@ -70,7 +70,7 @@
                         @endif
                     </td>
                     <td class="px-6 py-3.5 text-right font-bold text-sm {{ $m->tipe === 'masuk' ? 'text-success-600' : 'text-red-500' }} whitespace-nowrap">
-                        {{ $m->tipe === 'masuk' ? '+' : '-' }}{{ number_format($m->jumlah, 0, ',', '.') }} {{ $barang->satuan }}
+                        {{ $m->tipe === 'masuk' ? '+' : '-' }}{{ format_qty_id($m->jumlah) }} {{ $barang->satuan }}
                     </td>
                     <td class="px-6 py-3.5 text-right text-xs text-secondary-light whitespace-nowrap">Rp {{ number_format($m->harga_satuan, 0, ',', '.') }}</td>
                     <td class="px-6 py-3.5 text-xs {{ $m->referensi ? 'text-primary-600 font-semibold' : 'text-neutral-400' }}">{{ $m->referensi ?? '—' }}</td>

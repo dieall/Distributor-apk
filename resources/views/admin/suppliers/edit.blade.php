@@ -21,36 +21,6 @@
                 class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white">
             @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
         </div>
-        <div>
-            <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Email login <span class="text-red-500">*</span></label>
-            <input type="email" name="email" value="{{ old('email', $supplier->email) }}" required
-                class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white">
-            @error('email')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Password baru</label>
-                <input type="password" name="password" autocomplete="new-password" placeholder="Kosongkan jika tidak diubah"
-                    class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white">
-                @error('password')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Ulangi password</label>
-                <input type="password" name="password_confirmation" autocomplete="new-password"
-                    class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white">
-            </div>
-        </div>
-        <div>
-            <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Telepon</label>
-            <input type="text" name="phone" value="{{ old('phone', $supplier->phone) }}"
-                class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white">
-            @error('phone')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-        </div>
-        <div class="flex items-center gap-2">
-            <input type="hidden" name="is_active" value="0">
-            <input type="checkbox" name="is_active" value="1" id="is_active" class="rounded border-neutral-300 text-primary-600 focus:ring-primary-500" {{ old('is_active', $supplier->is_active) ? 'checked' : '' }}>
-            <label for="is_active" class="text-sm text-neutral-700 dark:text-neutral-200">Akun aktif</label>
-        </div>
     </div>
     <button type="submit" class="mt-6 px-5 py-2.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium flex items-center gap-2">
         <iconify-icon icon="ri:save-line"></iconify-icon> Perbarui Supplier

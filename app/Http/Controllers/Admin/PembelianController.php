@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Pembelian;
 use App\Models\Barang;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +30,7 @@ class PembelianController extends Controller
 
     public function create()
     {
-        $suppliers = User::where('role', 'supplier')->where('is_active', true)->get();
+        $suppliers = Supplier::orderBy('name')->get();
         $barang    = Barang::where('is_active', true)->get();
         return view('admin.pembelian.create', compact('suppliers', 'barang'));
     }
@@ -37,7 +38,7 @@ class PembelianController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'supplier_id'              => 'required|exists:users,id',
+            'supplier_id'              => 'required|exists:suppliers,id',
             'tanggal'                  => 'required|date',
             'tanggal_kirim_estimasi'   => 'nullable|date|after_or_equal:tanggal',
             'barang_id'                => 'required|array|min:1',
@@ -90,7 +91,7 @@ class PembelianController extends Controller
             }
         });
 
-        return redirect()->route('admin.pembelian.index')
+        return redirect()->route(fin_route_n('pembelian.index'))
             ->with('success', 'Purchase Order berhasil dibuat.');
     }
 
@@ -106,6 +107,19 @@ class PembelianController extends Controller
             'status' => 'required|in:draft,dikirim,sebagian_diterima,diterima,dibatalkan',
         ]);
         $pembelian->update(['status' => $request->status]);
+
+        // Notif gudang jika PO sudah dikirim (siap diterima)
+        if ($request->status === 'dikirim') {
+            notif_kirim_ke_role(
+                'gudang',
+                'PO ' . $pembelian->no_po . ' sudah dikirim supplier',
+                'Barang dari ' . ($pembelian->supplier->name ?? '—') . ' sedang dalam perjalanan. Siapkan penerimaan.',
+                '',
+                'ri:inbox-archive-line',
+                'warning'
+            );
+        }
+
         return back()->with('success', 'Status PO berhasil diperbarui.');
     }
 }

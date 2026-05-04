@@ -7,6 +7,10 @@
         <h6 class="font-semibold mb-0 dark:text-white">Invoice Pelanggan</h6>
         <p class="text-secondary-light text-sm mb-0 mt-1">Daftar invoice berdasarkan permintaan barang</p>
     </div>
+    <a href="{{ route('admin.invoice.export', request()->only(['search', 'pelanggan_id'])) }}"
+        class="px-4 py-2 rounded-lg bg-success-600 hover:bg-success-700 text-white text-sm font-medium flex items-center gap-2">
+        <iconify-icon icon="ri:file-excel-2-line"></iconify-icon> Export Excel
+    </a>
 </div>
 
 @include('partials.alert')

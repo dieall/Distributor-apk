@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pengeluaran;
+use App\Services\HtmlExcelExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -60,7 +61,35 @@ class PengeluaranController extends Controller
         $data['dibuat_oleh'] = auth()->id();
         $pengeluaran = Pengeluaran::create($data);
 
-        return redirect()->route('admin.pengeluaran.show', $pengeluaran)->with('success', 'Pengeluaran berhasil disimpan.');
+        return redirect()->route(fin_route_n('pengeluaran.show'), $pengeluaran)->with('success', 'Pengeluaran berhasil disimpan.');
+    }
+
+    public function export(Request $request)
+    {
+        $query = Pengeluaran::with('pembuat')->latest('tanggal')->latest();
+
+        if ($request->filled('bulan')) {
+            [$year, $month] = explode('-', $request->bulan);
+            $query->whereYear('tanggal', $year)->whereMonth('tanggal', $month);
+        }
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('kategori', 'like', "%{$request->search}%")
+                  ->orWhere('keterangan', 'like', "%{$request->search}%");
+            });
+        }
+
+        $data = $query->get();
+
+        $stem = 'pengeluaran';
+        if ($request->filled('bulan')) {
+            $stem .= '_'.$request->bulan;
+        } else {
+            $stem .= '_semua';
+        }
+
+        return HtmlExcelExport::pengeluaran($data, $stem);
     }
 
     public function destroy(Pengeluaran $pengeluaran)

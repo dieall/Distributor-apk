@@ -7,12 +7,12 @@
         <h6 class="font-semibold mb-0 dark:text-white">Tambah Pengeluaran</h6>
         <p class="text-secondary-light text-sm mb-0 mt-1">Input biaya harian/operasional.</p>
     </div>
-    <a href="{{ route('admin.pengeluaran.index') }}" class="px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100">Kembali</a>
+    <a href="{{ fin_route('pengeluaran.index') }}" class="px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100">Kembali</a>
 </div>
 
 @include('partials.alert')
 
-<form action="{{ route('admin.pengeluaran.store') }}" method="POST" enctype="multipart/form-data" class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6 max-w-3xl">
+<form action="{{ fin_route('pengeluaran.store') }}" method="POST" enctype="multipart/form-data" class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6 max-w-3xl">
     @csrf
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
         <div>

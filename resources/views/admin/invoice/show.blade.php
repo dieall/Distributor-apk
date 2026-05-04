@@ -13,7 +13,7 @@
             <iconify-icon icon="ri:printer-line"></iconify-icon> Cetak Invoice
         </a>
         @if($permintaan->suratJalan)
-        <a href="{{ route('admin.surat-jalan.show', $permintaan->suratJalan) }}"
+        <a href="{{ route('gudang.surat-jalan.show', $permintaan->suratJalan) }}"
             class="px-4 py-2 rounded-lg bg-info-100 text-info-700 hover:bg-info-200 text-sm font-medium flex items-center gap-2">
             <iconify-icon icon="ri:truck-line"></iconify-icon> Lihat Surat Jalan
         </a>
@@ -128,7 +128,7 @@
                             <p class="font-semibold dark:text-white mb-0 text-sm">{{ $d->barang->nama }}</p>
                             <p class="text-xs text-secondary-light mb-0">{{ $d->barang->kode }}</p>
                         </td>
-                        <td class="px-5 py-3 text-right text-sm dark:text-white whitespace-nowrap">{{ number_format($d->jumlah_disetujui,0,',','.') }} {{ $d->barang->satuan }}</td>
+                        <td class="px-5 py-3 text-right text-sm dark:text-white whitespace-nowrap">{{ format_qty_id($d->jumlah_disetujui) }} {{ $d->barang->satuan }}</td>
                         <td class="px-5 py-3 text-right text-sm dark:text-white whitespace-nowrap">Rp {{ number_format($d->harga_jual,0,',','.') }}</td>
                         <td class="px-5 py-3 text-right font-bold text-success-600 whitespace-nowrap">Rp {{ number_format($d->subtotal_jual,0,',','.') }}</td>
                     </tr>

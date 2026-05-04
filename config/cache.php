@@ -125,6 +125,13 @@ return [
     |
     */
 
-    'serializable_classes' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin dashboard aggregate cache (seconds)
+    |--------------------------------------------------------------------------
+    */
+
+    'admin_dashboard_ttl' => (int) env('ADMIN_DASHBOARD_CACHE_TTL', 90),
 
 ];

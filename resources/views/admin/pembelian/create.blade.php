@@ -8,7 +8,7 @@
         <p class="text-secondary-light text-sm mb-0 mt-1">Buat PO pembelian barang ke supplier</p>
     </div>
     <ul class="flex items-center gap-[6px] text-sm">
-        <li class="font-medium"><a href="{{ route('admin.pembelian.index') }}" class="hover:text-primary-600">Purchase Order</a></li>
+        <li class="font-medium"><a href="{{ fin_route('pembelian.index') }}" class="hover:text-primary-600">Purchase Order</a></li>
         <li class="text-neutral-400">/</li>
         <li class="text-neutral-500 font-medium">Buat PO</li>
     </ul>
@@ -16,7 +16,7 @@
 
 @include('partials.alert')
 
-<form action="{{ route('admin.pembelian.store') }}" method="POST" id="form-po" enctype="multipart/form-data">
+<form action="{{ fin_route('pembelian.store') }}" method="POST" id="form-po" enctype="multipart/form-data">
 @csrf
 
 {{-- Info PO --}}
@@ -172,7 +172,7 @@
 </div>
 
 <div class="flex items-center justify-end gap-3">
-    <a href="{{ route('admin.pembelian.index') }}"
+    <a href="{{ fin_route('pembelian.index') }}"
         class="px-5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 transition flex items-center gap-2">
         <iconify-icon icon="ri:arrow-left-line"></iconify-icon> Batal
     </a>

@@ -107,7 +107,7 @@
                         <td class="px-6 py-4 text-sm text-secondary-light">{{ $item->kategori }}</td>
                         <td class="px-6 py-4 text-right">
                             <span class="font-bold {{ $rendah ? 'text-danger-600' : 'text-success-600' }}">
-                                {{ number_format($jumlah, 0, ',', '.') }}
+                                {{ format_qty_id($jumlah) }}
                             </span>
                             <span class="text-xs text-secondary-light"> {{ $item->satuan }}</span>
                         </td>

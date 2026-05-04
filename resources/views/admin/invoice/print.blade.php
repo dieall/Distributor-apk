@@ -59,6 +59,9 @@
     </style>
 </head>
 <body>
+@php
+    $c = config('company');
+@endphp
 <div class="page">
 
     <div class="no-print" style="text-align:right; margin-bottom:12px;">
@@ -73,9 +76,9 @@
     {{-- Header --}}
     <div class="header">
         <div>
-            <div class="company-name">CV. DISTRIBUTOR APK</div>
-            <div class="company-sub">Distributor Alat &amp; Perlengkapan Kebutuhan</div>
-            <div class="company-sub">Jl. Serang - Cilegon Kota Cilegon | Telp: (021) 000-0000</div>
+            <div class="company-name">{{ $c['legal_name'] }}</div>
+            <div class="company-sub">{{ $c['tagline'] }}</div>
+            <div class="company-sub">{{ $c['address'] }}@if(! empty($c['phone'])) | Telp: {{ $c['phone'] }}@endif</div>
         </div>
         <div class="doc-title">
             <h2>Invoice</h2>
@@ -139,7 +142,7 @@
                 <td><strong>{{ $d->barang->nama }}</strong></td>
                 <td style="font-family:monospace;font-size:10px;color:#555;">{{ $d->barang->kode }}</td>
                 <td>{{ $d->barang->satuan }}</td>
-                <td class="td-right">{{ number_format($d->jumlah_disetujui, 0, ',', '.') }}</td>
+                <td class="td-right">{{ format_qty_id($d->jumlah_disetujui) }}</td>
                 <td class="td-right">Rp {{ number_format($d->harga_jual, 0, ',', '.') }}</td>
                 <td class="td-right"><strong>Rp {{ number_format($d->subtotal_jual, 0, ',', '.') }}</strong></td>
             </tr>
@@ -171,7 +174,7 @@
             <h4>Informasi Pembayaran</h4>
             <p>Bank : <strong>BCA / Mandiri</strong><br>
             No. Rek : <strong>123-456-789</strong><br>
-            Atas Nama : <strong>CV. Distributor APK</strong><br>
+            Atas Nama : <strong>{{ $c['legal_name'] }}</strong><br>
             Mohon sertakan nomor permintaan saat transfer.</p>
         </div>
     </div>
@@ -180,7 +183,7 @@
     <div class="ttd-grid">
         <div class="ttd-box">
             <div class="role">Hormat Kami</div>
-            <div class="line">CV. Distributor APK</div>
+            <div class="line">{{ $c['legal_name'] }}</div>
         </div>
         <div class="ttd-box">
             <div class="role">Penerima / Pelanggan</div>
@@ -189,7 +192,7 @@
     </div>
 
     <p style="margin-top:18px; font-size:10px; color:#999; text-align:center;">
-        Invoice ini diterbitkan pada {{ now()->format('d F Y, H:i') }} WIB &mdash; CV. Distributor APK
+        Invoice ini diterbitkan pada {{ now()->format('d F Y, H:i') }} WIB &mdash; {{ $c['legal_name'] }}
     </p>
 </div>
 </body>

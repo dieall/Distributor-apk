@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -12,44 +13,44 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'name'     => 'Administrator',
-                'email'    => 'admin@distributor.com',
-                'password' => Hash::make('password'),
-                'role'     => 'admin',
+                'name'      => 'Administrator',
+                'email'     => 'admin@distributor.com',
+                'password'  => Hash::make('password'),
+                'role'      => 'admin',
                 'is_active' => true,
-                'phone'    => '081234567890',
+                'phone'     => '081234567890',
             ],
             [
-                'name'     => 'Petugas Gudang',
-                'email'    => 'gudang@distributor.com',
-                'password' => Hash::make('password'),
-                'role'     => 'gudang',
+                'name'      => 'Petugas Gudang',
+                'email'     => 'gudang@distributor.com',
+                'password'  => Hash::make('password'),
+                'role'      => 'gudang',
                 'is_active' => true,
-                'phone'    => '081234567891',
+                'phone'     => '081234567891',
             ],
             [
-                'name'     => 'Sales Manager',
-                'email'    => 'sales@distributor.com',
-                'password' => Hash::make('password'),
-                'role'     => 'sales',
+                'name'      => 'Sales Manager',
+                'email'     => 'sales@distributor.com',
+                'password'  => Hash::make('password'),
+                'role'      => 'sales',
                 'is_active' => true,
-                'phone'    => '081234567892',
+                'phone'     => '081234567892',
             ],
             [
-                'name'     => 'PT. Supplier Jaya',
-                'email'    => 'supplier@distributor.com',
-                'password' => Hash::make('password'),
-                'role'     => 'supplier',
+                'name'      => 'Staff Purchasing',
+                'email'     => 'purchasing@distributor.com',
+                'password'  => Hash::make('password'),
+                'role'      => 'purchasing',
                 'is_active' => true,
-                'phone'    => '081234567893',
+                'phone'     => '081234567893',
             ],
             [
-                'name'     => 'Toko Pelanggan',
-                'email'    => 'pelanggan@distributor.com',
-                'password' => Hash::make('password'),
-                'role'     => 'pelanggan',
+                'name'      => 'Toko Pelanggan',
+                'email'     => 'pelanggan@distributor.com',
+                'password'  => Hash::make('password'),
+                'role'      => 'pelanggan',
                 'is_active' => true,
-                'phone'    => '081234567894',
+                'phone'     => '081234567894',
             ],
         ];
 
@@ -60,16 +61,22 @@ class UserSeeder extends Seeder
             );
         }
 
+        Supplier::firstOrCreate(
+            ['name' => 'PT. Supplier Jaya'],
+            []
+        );
+
         $this->command->info('Users berhasil dibuat:');
         $this->command->table(
             ['Role', 'Email', 'Password'],
             [
                 ['Admin',     'admin@distributor.com',     'password'],
                 ['Gudang',    'gudang@distributor.com',    'password'],
-                ['Sales',     'sales@distributor.com',     'password'],
-                ['Supplier',  'supplier@distributor.com',  'password'],
-                ['Pelanggan', 'pelanggan@distributor.com', 'password'],
+                ['Sales',      'sales@distributor.com',      'password'],
+                ['Purchasing', 'purchasing@distributor.com',   'password'],
+                ['Pelanggan',  'pelanggan@distributor.com',    'password'],
             ]
         );
+        $this->command->info('Supplier contoh (nama saja): PT. Supplier Jaya');
     }
 }

@@ -14,6 +14,7 @@ use App\Models\Stok;
 use App\Models\StokMutasi;
 use App\Models\SuratJalan;
 use App\Models\SuratJalanDetail;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -23,13 +24,13 @@ class DummyDataSeeder extends Seeder
     public function run(): void
     {
         $admin = User::where('email', 'admin@distributor.com')->first();
-        $supplier = User::where('email', 'supplier@distributor.com')->first();
+        $supplier = Supplier::where('name', 'PT. Supplier Jaya')->first();
         $gudang = User::where('email', 'gudang@distributor.com')->first();
         $sales = User::where('email', 'sales@distributor.com')->first();
         $pelanggan = User::where('email', 'pelanggan@distributor.com')->first();
 
         if (! $admin || ! $supplier || ! $gudang || ! $sales || ! $pelanggan) {
-            $this->command->error('Jalankan UserSeeder terlebih dahulu.');
+            $this->command->error('Jalankan UserSeeder terlebih dahulu (termasuk supplier PT. Supplier Jaya).');
 
             return;
         }
@@ -56,7 +57,7 @@ class DummyDataSeeder extends Seeder
         $this->command->info('Data demo (PO, penerimaan, permintaan, surat jalan, pengeluaran) selesai.');
     }
 
-    private function seedPembelianDanPenerimaan(User $admin, User $supplier, User $gudang, array $b): void
+    private function seedPembelianDanPenerimaan(User $admin, Supplier $supplier, User $gudang, array $b): void
     {
         $po1 = Pembelian::firstOrCreate(
             ['no_po' => 'SEED-PO-0001'],

@@ -86,16 +86,9 @@
         </div>
         @endif
     </div>
-    @if($permintaan->suratJalan->status !== 'selesai')
-    <div class="px-5 pb-5">
-        <form action="{{ route('sales.suratJalan.kirim', $permintaan->suratJalan) }}" method="POST">
-            @csrf @method('PATCH')
-            <button type="submit" class="px-5 py-2.5 rounded-lg bg-success-600 hover:bg-success-700 text-white text-sm font-medium flex items-center gap-2 transition shadow-sm">
-                <iconify-icon icon="ri:send-plane-line"></iconify-icon> Tandai Dikirim
-            </button>
-        </form>
+    <div class="px-5 pb-5 pt-0">
+        <p class="text-xs text-secondary-light mb-0">Status pengiriman dan cetak surat jalan diurus oleh <strong>gudang</strong> (menu Surat Jalan).</p>
     </div>
-    @endif
 </div>
 @endif
 
@@ -116,18 +109,18 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="bg-neutral-50 dark:bg-neutral-800">
-                        <th class="px-6 py-3 text-xs font-semibold text-secondary-light" style="width:48px">✓</th>
+                        <th class="px-4 py-3 text-xs font-semibold text-secondary-light text-center" style="width:52px">✓</th>
                         <th class="text-left px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Barang</th>
                         <th class="text-right px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Diminta</th>
                         <th class="text-right px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Stok</th>
-                        <th class="text-left px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Disetujui</th>
-                        <th class="text-left px-6 py-3 text-xs font-semibold text-secondary-light uppercase">Harga Jual</th>
+                        <th class="text-left px-6 py-3 text-xs font-semibold text-secondary-light uppercase" style="min-width: 170px;">Disetujui</th>
+                        <th class="text-left px-6 py-3 text-xs font-semibold text-secondary-light uppercase" style="min-width: 190px;">Harga Jual</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-neutral-100 dark:divide-neutral-600">
                     @foreach($permintaan->detail as $i => $d)
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-600 transition">
-                        <td class="px-6 py-3.5 text-center">
+                        <td class="px-4 py-3.5 text-center align-top">
                             <input type="hidden" name="items[{{ $i }}][id]" value="{{ $d->id }}">
                             <input type="checkbox" name="items[{{ $i }}][is_checked]" value="1" {{ $d->is_checked ? 'checked' : '' }}
                                 class="w-4 h-4 rounded border-neutral-300 text-primary-600 cursor-pointer">
@@ -136,21 +129,24 @@
                             <p class="font-semibold text-sm dark:text-white mb-0">{{ $d->barang->nama }}</p>
                             <p class="text-xs text-secondary-light mb-0">{{ $d->barang->kode }} · {{ $d->barang->satuan }}</p>
                         </td>
-                        <td class="px-6 py-3.5 text-right font-bold text-sm dark:text-white">{{ number_format($d->jumlah_diminta, 0, ',', '.') }} {{ $d->barang->satuan }}</td>
+                        <td class="px-6 py-3.5 text-right font-bold text-sm dark:text-white">{{ format_qty_id($d->jumlah_diminta) }} {{ $d->barang->satuan }}</td>
                         <td class="px-6 py-3.5 text-right">
                             @php $stok = $d->barang->stok?->jumlah ?? 0; @endphp
-                            <span class="text-sm font-bold {{ $stok < $d->jumlah_diminta ? 'text-red-500' : 'text-success-600' }}">{{ number_format($stok, 0, ',', '.') }}</span>
+                            <span class="text-sm font-bold {{ $stok < $d->jumlah_diminta ? 'text-red-500' : 'text-success-600' }}">{{ format_qty_id($stok) }}</span>
                         </td>
-                        <td class="px-6 py-3.5">
+                        <td class="px-6 py-3.5 align-top">
+                            @php $defaultDisetujui = (float) $d->jumlah_disetujui > 0 ? $d->jumlah_disetujui : $d->jumlah_diminta; @endphp
                             <input type="number" name="items[{{ $i }}][jumlah_disetujui]"
-                                value="{{ $d->jumlah_disetujui ?: $d->jumlah_diminta }}"
+                                value="{{ $defaultDisetujui }}"
                                 min="0" step="0.01" max="{{ $d->barang->stok?->jumlah ?? 0 }}"
-                                class="w-24 px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                class="w-full max-w-[150px] px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <p class="text-[11px] text-secondary-light mt-1 mb-0">Maks: {{ format_qty_id($stok) }} {{ $d->barang->satuan }}</p>
                         </td>
-                        <td class="px-6 py-3.5">
+                        <td class="px-6 py-3.5 align-top">
                             <input type="text" name="items[{{ $i }}][harga_jual]"
                                 value="{{ $d->harga_jual > 0 ? number_format($d->harga_jual, 0, ',', '.') : number_format($d->barang->harga_jual, 0, ',', '.') }}"
-                                class="input-ribuan w-32 px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                class="input-ribuan w-full max-w-[170px] px-3 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <p class="text-[11px] text-secondary-light mt-1 mb-0">Format: tanpa titik desimal</p>
                         </td>
                     </tr>
                     @endforeach
@@ -188,8 +184,8 @@
                         <p class="font-semibold text-sm dark:text-white mb-0">{{ $d->barang->nama }}</p>
                         <p class="text-xs text-secondary-light mb-0">{{ $d->barang->kode }}</p>
                     </td>
-                    <td class="px-6 py-3.5 text-right text-sm dark:text-white">{{ number_format($d->jumlah_diminta, 0, ',', '.') }} {{ $d->barang->satuan }}</td>
-                    <td class="px-6 py-3.5 text-right font-bold text-sm dark:text-white">{{ number_format($d->jumlah_disetujui, 0, ',', '.') }} {{ $d->barang->satuan }}</td>
+                    <td class="px-6 py-3.5 text-right text-sm dark:text-white">{{ format_qty_id($d->jumlah_diminta) }} {{ $d->barang->satuan }}</td>
+                    <td class="px-6 py-3.5 text-right font-bold text-sm dark:text-white">{{ format_qty_id($d->jumlah_disetujui) }} {{ $d->barang->satuan }}</td>
                     <td class="px-6 py-3.5 text-right font-bold text-success-600">Rp {{ number_format($d->subtotal_jual, 0, ',', '.') }}</td>
                     <td class="px-6 py-3.5 text-center">
                         @if($d->is_checked)
@@ -206,47 +202,14 @@
 </div>
 @endif
 
-{{-- Form Buat Surat Jalan --}}
 @if($permintaan->status === 'diproses' && !$permintaan->suratJalan)
-<div class="card shadow-none border border-primary-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl overflow-hidden">
-    <div class="px-6 py-4 border-b border-primary-200 dark:border-neutral-600 bg-primary-50 dark:bg-neutral-800 flex items-center gap-2">
-        <iconify-icon icon="ri:file-text-line" class="text-primary-600 text-lg"></iconify-icon>
-        <h6 class="font-semibold mb-0 text-primary-700 dark:text-white text-sm">Buat Surat Jalan</h6>
+<div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 flex items-center gap-2">
+        <iconify-icon icon="ri:truck-line" class="text-primary-600 text-lg"></iconify-icon>
+        <h6 class="font-semibold mb-0 dark:text-white text-sm">Surat Jalan</h6>
     </div>
     <div class="p-6">
-        <form action="{{ route('sales.permintaan.surat-jalan', $permintaan) }}" method="POST">
-            @csrf
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
-                <div>
-                    <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Tanggal Pengiriman <span class="text-red-500">*</span></label>
-                    <input type="date" name="tanggal" value="{{ date('Y-m-d') }}" required
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">No. Kendaraan</label>
-                    <input type="text" name="no_kendaraan" placeholder="Contoh: B 1234 ABC"
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Nama Driver</label>
-                    <input type="text" name="driver" placeholder="Nama pengemudi"
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Alamat Tujuan</label>
-                    <input type="text" name="alamat_tujuan" value="{{ $permintaan->pelanggan->name }}" placeholder="Alamat pengiriman"
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
-                </div>
-                <div class="sm:col-span-2 lg:col-span-4">
-                    <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Catatan</label>
-                    <textarea name="catatan" rows="2" placeholder="Catatan pengiriman (opsional)"
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>
-                </div>
-            </div>
-            <button type="submit" class="px-5 py-2.5 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium flex items-center gap-2 transition shadow-sm">
-                <iconify-icon icon="ri:file-text-line"></iconify-icon> Buat Surat Jalan & Kurangi Stok
-            </button>
-        </form>
+        <p class="text-sm text-neutral-700 dark:text-neutral-200 mb-0">Setelah ceklis disimpan, tim <strong>gudang</strong> yang membuat surat jalan dan mengurangi stok lewat menu <strong>Manajemen Gudang → Surat Jalan</strong>.</p>
     </div>
 </div>
 @endif

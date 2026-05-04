@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,8 +23,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Route::bind('supplier', function (string $value) {
-            return User::where('role', 'supplier')->whereKey($value)->firstOrFail();
+        RateLimiter::for('login', function (Request $request) {
+            $email = strtolower((string) $request->input('email', ''));
+            $key = $email.'|'.$request->ip();
+
+            return Limit::perMinute(5)->by($key);
         });
+
+        if ($this->app->environment('production') && str_starts_with((string) config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
     }
 }

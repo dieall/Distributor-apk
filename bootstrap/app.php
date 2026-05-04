@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+        $middleware->appendToGroup('web', [
+            \App\Http\Middleware\SecurityHeaders::class,
+        ]);
 
         // Hindari redirect loop: middleware `guest` default mengarahkan ke `/` jika tidak ada
         // route bernama `dashboard`/`home`, sementara `/` di web.php mengarah ke login.

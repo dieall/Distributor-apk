@@ -7,7 +7,7 @@
         <h6 class="font-semibold mb-0 dark:text-white">Detail Pengeluaran</h6>
         <p class="text-secondary-light text-sm mb-0 mt-1">{{ $pengeluaran->keterangan }}</p>
     </div>
-    <a href="{{ route('admin.pengeluaran.index') }}" class="px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 inline-flex items-center gap-2">
+    <a href="{{ fin_route('pengeluaran.index') }}" class="px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 inline-flex items-center gap-2">
         <iconify-icon icon="ri:arrow-left-line"></iconify-icon> Kembali ke daftar
     </a>
 </div>
@@ -65,7 +65,7 @@
     <div class="lg:col-span-1">
         <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6">
             <h6 class="font-semibold text-sm mb-4 dark:text-white">Aksi</h6>
-            <form action="{{ route('admin.pengeluaran.destroy', $pengeluaran) }}" method="POST" onsubmit="return confirm('Hapus pengeluaran ini beserta bukti?')">
+            <form action="{{ fin_route('pengeluaran.destroy', $pengeluaran) }}" method="POST" onsubmit="return confirm('Hapus pengeluaran ini beserta bukti?')">
                 @csrf @method('DELETE')
                 <button type="submit" class="w-full px-4 py-2.5 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 text-sm font-medium flex items-center justify-center gap-2">
                     <iconify-icon icon="ri:delete-bin-line"></iconify-icon> Hapus pengeluaran

@@ -117,10 +117,10 @@
                         <p class="font-semibold text-sm dark:text-white mb-0">{{ $d->barang->nama }}</p>
                         <p class="text-xs text-secondary-light mb-0">{{ $d->barang->kategori }} · {{ $d->barang->satuan }}</p>
                     </td>
-                    <td class="px-6 py-3.5 text-right text-sm dark:text-white">{{ number_format($d->jumlah_diminta, 0, ',', '.') }} {{ $d->barang->satuan }}</td>
+                    <td class="px-6 py-3.5 text-right text-sm dark:text-white">{{ format_qty_id($d->jumlah_diminta) }} {{ $d->barang->satuan }}</td>
                     <td class="px-6 py-3.5 text-right text-sm font-bold dark:text-white">
                         @if($permintaan->status !== 'pending')
-                        {{ number_format($d->jumlah_disetujui, 0, ',', '.') }} {{ $d->barang->satuan }}
+                        {{ format_qty_id($d->jumlah_disetujui) }} {{ $d->barang->satuan }}
                         @else
                         <span class="text-secondary-light">—</span>
                         @endif

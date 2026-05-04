@@ -70,7 +70,7 @@
                         <p class="font-semibold text-sm dark:text-white mb-0">{{ $d->barang->nama }}</p>
                         <p class="text-xs text-secondary-light mb-0">{{ $d->barang->kode }}</p>
                     </td>
-                    <td class="px-6 py-3.5 text-right text-sm dark:text-white font-semibold">{{ number_format($d->jumlah_diterima, 0, ',', '.') }} {{ $d->barang->satuan }}</td>
+                    <td class="px-6 py-3.5 text-right text-sm dark:text-white font-semibold">{{ format_qty_id($d->jumlah_diterima) }} {{ $d->barang->satuan }}</td>
                     <td class="px-6 py-3.5 text-right text-sm text-secondary-light">Rp {{ number_format($d->harga_satuan, 0, ',', '.') }}</td>
                     <td class="px-6 py-3.5 text-right text-sm font-bold dark:text-white">Rp {{ number_format($d->subtotal, 0, ',', '.') }}</td>
                 </tr>
