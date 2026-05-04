@@ -25,11 +25,13 @@ class SupplierController extends Controller
 
     public function create()
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         return view('admin.suppliers.create');
     }
 
     public function store(Request $request)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
         ]);
@@ -41,11 +43,13 @@ class SupplierController extends Controller
 
     public function edit(Supplier $supplier)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         return view('admin.suppliers.edit', compact('supplier'));
     }
 
     public function update(Request $request, Supplier $supplier)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
         ]);
@@ -57,6 +61,7 @@ class SupplierController extends Controller
 
     public function destroy(Supplier $supplier)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         if (Pembelian::where('supplier_id', $supplier->id)->exists()) {
             return back()->with('error', 'Supplier tidak dapat dihapus karena masih digunakan pada Purchase Order.');
         }

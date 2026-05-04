@@ -12,7 +12,7 @@
 
 @include('partials.alert')
 
-<form action="{{ route('admin.suppliers.store') }}" method="POST" class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6 max-w-2xl">
+<form action="{{ route('admin.suppliers.store') }}" method="POST" class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6">
     @csrf
     <div class="space-y-5">
         <div>

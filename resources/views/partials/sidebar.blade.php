@@ -14,7 +14,7 @@
 
             @php
                 $role = auth()->user()->role;
-                $isAdmin = $role === 'admin';
+                $isAdmin = $role === 'admin' || $role === 'direktur';
             @endphp
 
             {{-- ===== ADMIN (Administrator) ===== --}}
@@ -60,6 +60,14 @@
                     <a href="{{ route('admin.invoice.index') }}">
                         <iconify-icon icon="ri:bill-line" class="menu-icon"></iconify-icon>
                         <span>Invoice Pelanggan</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-menu-group-title">Sistem</li>
+                <li class="{{ request()->routeIs('admin.users.*') ? 'active-page' : '' }}">
+                    <a href="{{ route('admin.users.index') }}">
+                        <iconify-icon icon="ri:group-line" class="menu-icon"></iconify-icon>
+                        <span>Manajemen User</span>
                     </a>
                 </li>
             @endif

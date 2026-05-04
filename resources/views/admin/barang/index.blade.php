@@ -50,9 +50,11 @@
                 @if(request()->hasAny(['search','kategori']))
                 <a href="{{ route('admin.barang.index') }}" class="btn btn-outline-secondary btn-sm px-4 py-2">Reset</a>
                 @endif
+                @if(!auth()->user()->isDirektur())
                 <a href="{{ route('admin.barang.create') }}" class="btn btn-success btn-sm flex items-center gap-2 px-4 py-2 ms-auto">
                     <iconify-icon icon="ri:add-line"></iconify-icon> Tambah Barang
                 </a>
+                @endif
             </div>
         </form>
     </div>
@@ -117,6 +119,7 @@
                                     class="btn btn-outline-primary btn-sm px-3 py-2 flex items-center gap-1 radius-6" title="Detail">
                                     <iconify-icon icon="ri:eye-line"></iconify-icon>
                                 </a>
+                                @if(!auth()->user()->isDirektur())
                                 <a href="{{ route('admin.barang.edit', $item) }}"
                                     class="btn btn-outline-warning btn-sm px-3 py-2 flex items-center gap-1 radius-6" title="Edit">
                                     <iconify-icon icon="ri:edit-line"></iconify-icon>
@@ -129,6 +132,7 @@
                                         <iconify-icon icon="ri:delete-bin-line"></iconify-icon>
                                     </button>
                                 </form>
+                                @endif
                             </div>
                         </td>
                     </tr>

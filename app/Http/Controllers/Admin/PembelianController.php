@@ -30,6 +30,7 @@ class PembelianController extends Controller
 
     public function create()
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         $suppliers = Supplier::orderBy('name')->get();
         $barang    = Barang::where('is_active', true)->get();
         return view('admin.pembelian.create', compact('suppliers', 'barang'));
@@ -37,6 +38,7 @@ class PembelianController extends Controller
 
     public function store(Request $request)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         $request->validate([
             'supplier_id'              => 'required|exists:suppliers,id',
             'tanggal'                  => 'required|date',
@@ -103,6 +105,7 @@ class PembelianController extends Controller
 
     public function updateStatus(Request $request, Pembelian $pembelian)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         $request->validate([
             'status' => 'required|in:draft,dikirim,sebagian_diterima,diterima,dibatalkan',
         ]);

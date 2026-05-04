@@ -41,11 +41,13 @@ class PengeluaranController extends Controller
 
     public function create()
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         return view('admin.pengeluaran.create');
     }
 
     public function store(Request $request)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         $data = $request->validate([
             'tanggal' => 'required|date',
             'kategori' => 'required|string|max:80',
@@ -94,6 +96,7 @@ class PengeluaranController extends Controller
 
     public function destroy(Pengeluaran $pengeluaran)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         if ($pengeluaran->bukti_foto) {
             Storage::disk('public')->delete($pengeluaran->bukti_foto);
         }

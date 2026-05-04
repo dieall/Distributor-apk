@@ -33,11 +33,13 @@ class BarangController extends Controller
 
     public function create()
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         return view('admin.barang.create');
     }
 
     public function store(Request $request)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         $validated = $request->validate([
             'kode'          => 'required|string|max:20|unique:barang',
             'nama'          => 'required|string|max:255',
@@ -67,11 +69,13 @@ class BarangController extends Controller
 
     public function edit(Barang $barang)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         return view('admin.barang.edit', compact('barang'));
     }
 
     public function update(Request $request, Barang $barang)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         $validated = $request->validate([
             'kode'         => 'required|string|max:20|unique:barang,kode,' . $barang->id,
             'nama'         => 'required|string|max:255',
@@ -95,6 +99,7 @@ class BarangController extends Controller
 
     public function destroy(Barang $barang)
     {
+        abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
         $nama = $barang->nama;
         $barang->delete();
 

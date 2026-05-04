@@ -399,8 +399,14 @@ const optPembelian = {
     chart: { type: 'area', height: 260, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
     series: [{ name: 'Nilai (Rp)', data: {!! $pembelianValues !!} }],
     xaxis: { categories: {!! $pembelianLabels !!}, labels: { style: { fontSize: '11px' } } },
-    yaxis: { labels: { formatter: v => 'Rp ' + Number(v).toLocaleString('id-ID'), style: { fontSize: '11px' } } },
-    tooltip: { y: { formatter: v => 'Rp ' + Number(v).toLocaleString('id-ID') } },
+    yaxis: {
+        tickAmount: 5,
+        labels: {
+            formatter: v => 'Rp ' + Math.round(v).toLocaleString('id-ID'),
+            style: { fontSize: '11px' }
+        }
+    },
+    tooltip: { y: { formatter: v => 'Rp ' + Math.round(v).toLocaleString('id-ID') } },
     colors: ['#4F46E5'],
     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.45, opacityTo: 0.05, stops: [0, 100] } },
     stroke: { curve: 'smooth', width: 2 },
@@ -419,8 +425,19 @@ const optProfit = {
         { name: 'Keuntungan', data: {!! $profitKeuntungan !!} },
     ],
     xaxis: { categories: {!! $profitLabels !!}, labels: { style: { fontSize: '11px' } } },
-    yaxis: { labels: { formatter: v => 'Rp ' + Number(v).toLocaleString('id-ID'), style: { fontSize: '11px' } } },
-    tooltip: { y: { formatter: v => 'Rp ' + Number(v).toLocaleString('id-ID') } },
+    yaxis: {
+        tickAmount: 5,
+        labels: {
+            formatter: v => {
+                const n = Math.round(v);
+                if (Math.abs(n) >= 1000000) return 'Rp ' + (n / 1000000).toFixed(1).replace('.', ',') + 'jt';
+                if (Math.abs(n) >= 1000) return 'Rp ' + Math.round(n / 1000).toLocaleString('id-ID') + 'rb';
+                return 'Rp ' + n.toLocaleString('id-ID');
+            },
+            style: { fontSize: '11px' }
+        }
+    },
+    tooltip: { y: { formatter: v => 'Rp ' + Math.round(v).toLocaleString('id-ID') } },
     colors: ['#22C55E', '#4F46E5', '#EF4444', '#F59E0B'],
     stroke: { curve: 'smooth', width: [2, 2, 2, 4] },
     dataLabels: { enabled: false },

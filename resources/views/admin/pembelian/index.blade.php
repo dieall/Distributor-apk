@@ -40,9 +40,11 @@
             </div>
             <div class="flex items-center gap-2">
                 <button type="submit" class="btn btn-primary btn-sm px-4 py-2">Filter</button>
+                @if(!auth()->user()->isDirektur())
                 <a href="{{ fin_route('pembelian.create') }}" class="btn btn-success btn-sm px-4 py-2 flex items-center gap-2">
                     <iconify-icon icon="ri:add-line"></iconify-icon> Buat PO
                 </a>
+                @endif
             </div>
         </form>
     </div>

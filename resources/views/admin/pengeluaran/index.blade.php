@@ -12,9 +12,11 @@
            class="px-4 py-2 rounded-lg bg-success-600 hover:bg-success-700 text-white text-sm font-medium flex items-center gap-2">
             <iconify-icon icon="ri:file-excel-2-line"></iconify-icon> Export Excel
         </a>
+        @if(!auth()->user()->isDirektur())
         <a href="{{ fin_route('pengeluaran.create') }}" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium flex items-center gap-2">
             <iconify-icon icon="ri:add-line"></iconify-icon> Tambah Pengeluaran
         </a>
+        @endif
     </div>
 </div>
 
@@ -58,12 +60,14 @@
                             <a href="{{ fin_route('pengeluaran.show', $item) }}" class="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 hover:bg-primary-200 inline-flex items-center justify-center" title="Detail">
                                 <iconify-icon icon="ri:eye-line"></iconify-icon>
                             </a>
+                            @if(!auth()->user()->isDirektur())
                             <form action="{{ fin_route('pengeluaran.destroy', $item) }}" method="POST" class="inline" onsubmit="return confirm('Hapus pengeluaran ini?')">
                                 @csrf @method('DELETE')
                                 <button class="w-8 h-8 rounded-lg bg-red-100 text-red-500 hover:bg-red-200 inline-flex items-center justify-center" type="submit" title="Hapus">
                                     <iconify-icon icon="ri:delete-bin-line"></iconify-icon>
                                 </button>
                             </form>
+                            @endif
                         </div>
                     </td>
                 </tr>

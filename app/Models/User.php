@@ -41,6 +41,11 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
+    public function isDirektur(): bool
+    {
+        return $this->role === 'direktur';
+    }
+
     public function isGudang(): bool
     {
         return $this->role === 'gudang';
@@ -65,6 +70,7 @@ class User extends Authenticatable
     {
         return match($this->role) {
             'admin'     => 'Administrator',
+            'direktur'  => 'Direktur',
             'gudang'    => 'Gudang',
             'sales'      => 'Sales',
             'purchasing' => 'Purchasing',
@@ -77,6 +83,7 @@ class User extends Authenticatable
     {
         return match($this->role) {
             'admin'     => 'admin.dashboard',
+            'direktur'  => 'admin.dashboard',
             'gudang'    => 'gudang.dashboard',
             'sales'      => 'sales.dashboard',
             'purchasing' => 'purchasing.dashboard',

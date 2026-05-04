@@ -132,7 +132,7 @@
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     {{-- Update Status --}}
-    @if(!in_array($pembelian->status, ['diterima','dibatalkan']))
+    @if(!in_array($pembelian->status, ['diterima','dibatalkan']) && !auth()->user()->isDirektur())
     <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 flex items-center gap-2">
             <iconify-icon icon="ri:refresh-line" class="text-warning-600 text-lg"></iconify-icon>

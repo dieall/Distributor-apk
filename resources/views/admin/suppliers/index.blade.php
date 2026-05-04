@@ -8,9 +8,11 @@
         <p class="text-secondary-light text-sm mb-0 mt-1">Daftar nama PT / supplier untuk PO. Hanya admin yang dapat menambah atau mengubah.</p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
+        @if(!auth()->user()->isDirektur())
         <a href="{{ route('admin.suppliers.create') }}" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium flex items-center gap-2">
             <iconify-icon icon="ri:add-line"></iconify-icon> Tambah Supplier
         </a>
+        @endif
     </div>
 </div>
 
@@ -45,6 +47,7 @@
                     <td class="px-6 py-3.5 font-semibold dark:text-white">{{ $item->name }}</td>
                     <td class="px-6 py-3.5 text-center">
                         <div class="flex items-center justify-center gap-2">
+                            @if(!auth()->user()->isDirektur())
                             <a href="{{ route('admin.suppliers.edit', $item) }}" class="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 hover:bg-primary-200 inline-flex items-center justify-center" title="Ubah">
                                 <iconify-icon icon="ri:pencil-line"></iconify-icon>
                             </a>
@@ -54,6 +57,9 @@
                                     <iconify-icon icon="ri:delete-bin-line"></iconify-icon>
                                 </button>
                             </form>
+                            @else
+                            -
+                            @endif
                         </div>
                     </td>
                 </tr>

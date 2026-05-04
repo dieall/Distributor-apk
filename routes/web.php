@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\BarangController;
 use App\Http\Controllers\Admin\PembelianController;
 use App\Http\Controllers\Admin\PengeluaranController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Gudang\SuratJalanController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Purchasing\DashboardController as PurchasingDashboard;
@@ -79,6 +80,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('invoice/export', [InvoiceController::class, 'export'])->name('invoice.export');
     Route::get('invoice/{permintaan}', [InvoiceController::class, 'show'])->name('invoice.show');
     Route::get('invoice/{permintaan}/print', [InvoiceController::class, 'print'])->name('invoice.print');
+
+    // Manajemen User
+    Route::resource('users', UserController::class)->except(['show']);
+    Route::patch('users/{user}/toggle', [UserController::class, 'toggleActive'])->name('users.toggle');
 });
 
 // Gudang routes

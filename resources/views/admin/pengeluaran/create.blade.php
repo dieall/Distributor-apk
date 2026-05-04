@@ -12,7 +12,7 @@
 
 @include('partials.alert')
 
-<form action="{{ fin_route('pengeluaran.store') }}" method="POST" enctype="multipart/form-data" class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6 max-w-3xl">
+<form action="{{ fin_route('pengeluaran.store') }}" method="POST" enctype="multipart/form-data" class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6">
     @csrf
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
         <div>
