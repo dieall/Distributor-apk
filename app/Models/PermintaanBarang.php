@@ -14,6 +14,7 @@ class PermintaanBarang extends Model
     protected $fillable = [
         'no_permintaan', 'pelanggan_id', 'diproses_oleh',
         'tanggal_request', 'tanggal_dibutuhkan', 'status', 'catatan',
+        'alamat', 'no_hp', 'no_po_customer'
     ];
 
     protected $casts = [

@@ -37,7 +37,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Kode Barang <span class="text-red-500">*</span></label>
-                    <input type="text" name="kode" value="{{ old('kode') }}" placeholder="Contoh: BRG-001" maxlength="20" required
+                    <input type="text" name="kode" value="{{ old('kode', $autoKode) }}" placeholder="Contoh: BRG-0001" maxlength="20" required
                         class="w-full px-3.5 py-2.5 rounded-lg border text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 {{ $errors->has('kode') ? 'border-red-400' : 'border-neutral-300 dark:border-neutral-500' }}">
                     @error('kode')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     <p class="text-neutral-400 text-xs mt-1">Kode unik, maks. 20 karakter</p>
@@ -67,7 +67,7 @@
                     <select name="satuan" required
                         class="w-full px-3.5 py-2.5 rounded-lg border text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 {{ $errors->has('satuan') ? 'border-red-400' : 'border-neutral-300 dark:border-neutral-500' }}">
                         <option value="">-- Pilih Satuan --</option>
-                        @foreach(['kg','gram','liter','ml','pcs','lusin','karton','dus','ikat','buah','bungkus','botol','kaleng'] as $sat)
+                        @foreach(['kg','gram','liter','ml','pcs','lusin','karton','dus','ikat','buah','bungkus','botol','kaleng','Renceng','Pack','Bal'] as $sat)
                         <option value="{{ $sat }}" {{ old('satuan') == $sat ? 'selected' : '' }}>{{ $sat }}</option>
                         @endforeach
                     </select>

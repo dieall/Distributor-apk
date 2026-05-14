@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Aldi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .invoice-box {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 12px;
+            border-top: 8px solid #3b82f6;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .header .logo-area h1 {
+            margin: 0;
+            font-size: 32px;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        .header .logo-area p {
+            margin: 4px 0 0;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .header .invoice-details {
+            text-align: right;
+        }
+
+        .header .invoice-details h2 {
+            margin: 0;
+            font-size: 36px;
+            color: #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .header .invoice-details p {
+            margin: 8px 0 0;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .header .invoice-details strong {
+            color: #1e293b;
+        }
+
+        .billing-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .billing-info div {
+            width: 48%;
+        }
+
+        .billing-info h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #64748b;
+            margin: 0 0 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .billing-info p {
+            margin: 4px 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        td {
+            font-size: 15px;
+            color: #1e293b;
+        }
+
+        td.amount {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        th.amount {
+            text-align: right;
+        }
+
+        .totals {
+            width: 50%;
+            margin-left: auto;
+        }
+
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            font-size: 15px;
+        }
+
+        .totals-row.total {
+            background-color: #f8fafc;
+            font-weight: 700;
+            font-size: 18px;
+            color: #0f172a;
+            border-radius: 6px;
+            margin-top: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 24px;
+        }
+
+        /* Print Specific Styles */
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .invoice-box {
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+                border-top: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+
+            .header {
+                margin-top: 20px;
+            }
+
+            .totals-row.total {
+                border: 1px solid #cbd5e1;
+            }
+
+            /* Webkit specific color enforcement for print */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-box">
+        <div class="header">
+            <div class="logo-area">
+                <h1>Aldi</h1>
+                <p>Web Developer & Software Engineer</p>
+            </div>
+            <div class="invoice-details">
+                <h2>INVOICE</h2>
+                <p>No. Invoice: <strong>INV-20260506-01</strong></p>
+                <p>Tanggal: <strong>06 Mei 2026</strong></p>
+
+            </div>
+        </div>
+
+        <div class="billing-info">
+            <div>
+                <h3>Ditagihkan Kepada:</h3>
+                <p><strong>CV Binuangeun Indah</strong></p>
+                <p>Pengelola Sistem</p>
+                <p>Indonesia</p>
+            </div>
+            <div>
+                <h3>Pembayaran Ke:</h3>
+                <p><strong>Aldi</strong></p>
+                <p>Seabank: 901992151851</p>
+                <p>a.n. Aldi</p>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Deskripsi Layanan</th>
+                    <th style="text-align: center;">Qty</th>
+                    <th class="amount">Harga</th>
+                    <th class="amount">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Pembuatan Website</strong><br>
+                        <span style="color: #64748b; font-size: 13px;">Pengembangan sistem berbasis web sesuai
+                            kebutuhan</span>
+                    </td>
+                    <td style="text-align: center;">1</td>
+                    <td class="amount">Rp 2.500.000</td>
+                    <td class="amount">Rp 2.500.000</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Jasa Hosting</strong><br>
+                        <span style="color: #64748b; font-size: 13px;">Layanan server hosting</span>
+                    </td>
+                    <td style="text-align: center;">1</td>
+                    <td class="amount">Rp 1.500.000</td>
+                    <td class="amount">Rp 1.500.000</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <div class="totals-row">
+                <span>Subtotal</span>
+                <span>Rp 4.000.000</span>
+            </div>
+            <div class="totals-row total">
+                <span>Total Pembayaran</span>
+                <span>Rp 4.000.000</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Terima kasih atas kepercayaannya menggunakan layanan saya.</p>
+            <p>Jika ada pertanyaan terkait invoice ini, silakan hubungi saya.</p>
+        </div>
+    </div>
+</body>
+
+</html>

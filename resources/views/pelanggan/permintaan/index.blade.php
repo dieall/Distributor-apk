@@ -56,9 +56,23 @@
                             @endif
                         </td>
                         <td class="px-6 py-4">
-                            <a href="{{ route('pelanggan.permintaan.show', $item) }}" class="btn btn-outline-primary btn-sm px-10 py-6 flex items-center gap-1 inline-flex">
-                                <iconify-icon icon="ri:eye-line"></iconify-icon> Detail
-                            </a>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <a href="{{ route('pelanggan.permintaan.show', $item) }}" class="btn btn-outline-primary btn-sm px-10 py-6 flex items-center gap-1 inline-flex">
+                                    <iconify-icon icon="ri:eye-line"></iconify-icon> Detail
+                                </a>
+                                @if($item->status === 'pending')
+                                <a href="{{ route('pelanggan.permintaan.edit', $item) }}" class="btn btn-outline-warning btn-sm px-10 py-6 flex items-center gap-1 inline-flex">
+                                    <iconify-icon icon="ri:edit-line"></iconify-icon> Edit
+                                </a>
+                                <form action="{{ route('pelanggan.permintaan.destroy', $item) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus permintaan ini?');" class="inline-flex">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm px-10 py-6 flex items-center gap-1">
+                                        <iconify-icon icon="ri:delete-bin-line"></iconify-icon> Hapus
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty

@@ -112,11 +112,15 @@ if (! function_exists('dash_route')) {
             'admin.pembelian.create'  => 'purchasing.pembelian.create',
             'admin.pembelian.show'    => 'purchasing.pembelian.show',
             'admin.pembelian.status'  => 'purchasing.pembelian.status',
+            'admin.pembelian.export'  => 'purchasing.pembelian.export',
             'admin.pengeluaran.index'   => 'purchasing.pengeluaran.index',
             'admin.pengeluaran.create'  => 'purchasing.pengeluaran.create',
             'admin.pengeluaran.show'    => 'purchasing.pengeluaran.show',
             'admin.pengeluaran.destroy' => 'purchasing.pengeluaran.destroy',
             'admin.pengeluaran.export'  => 'purchasing.pengeluaran.export',
+            'admin.pengeluaran.aset.index' => 'purchasing.pengeluaran.aset.index',
+            'admin.pengeluaran.aset.edit' => 'purchasing.pengeluaran.aset.edit',
+            'admin.pengeluaran.aset.update' => 'purchasing.pengeluaran.aset.update',
         ];
 
         if (auth()->user()->role === 'purchasing' && isset($map[$adminRouteName])) {

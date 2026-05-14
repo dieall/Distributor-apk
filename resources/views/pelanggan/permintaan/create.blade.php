@@ -29,11 +29,17 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
                 <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Tanggal Dibutuhkan</label>
-                <input type="date" name="tanggal_dibutuhkan" min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                <input type="date" name="tanggal_dibutuhkan"
                     class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
                 <p class="text-neutral-400 text-xs mt-1">Kosongkan jika tidak ada batas waktu</p>
             </div>
             <div>
+                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">No. PO Customer</label>
+                <input type="text" name="no_po_customer" value="{{ old('no_po_customer') }}" maxlength="50" placeholder="Nomor PO pembelian Anda (opsional)"
+                    class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <p class="text-neutral-400 text-xs mt-1">Akan tampil otomatis di pengaturan cetak invoice</p>
+            </div>
+            <div class="sm:col-span-2">
                 <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-200 mb-1.5">Catatan</label>
                 <textarea name="catatan" rows="3" placeholder="Instruksi khusus, catatan pengiriman, dll..."
                     class="w-full px-3.5 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>
@@ -93,7 +99,7 @@
                     <td class="px-3 py-3 text-right text-sm font-semibold text-success-600 whitespace-nowrap">Rp {{ number_format($b->harga_jual, 0, ',', '.') }}</td>
                     <td class="px-3 py-3 text-right text-sm font-semibold text-primary-600 whitespace-nowrap">Rp {{ number_format($hargaMbg, 0, ',', '.') }}</td>
                     <td class="px-3 py-3">
-                        <input type="number" name="jumlah_diminta[{{ $b->id }}]" value="1" min="1" step="0.01"
+                        <input type="number" name="jumlah_diminta[{{ $b->id }}]" value="1" min="0.01" step="0.01"
                             class="input-jumlah w-full max-w-[7rem] mx-auto block px-2.5 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm text-center bg-white dark:bg-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500" disabled>
                     </td>
                 </tr>

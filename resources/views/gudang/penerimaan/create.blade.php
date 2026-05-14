@@ -115,48 +115,99 @@
 
 @push('scripts')
 <script>
-document.getElementById('select-po').addEventListener('change', function() {
-    const items = JSON.parse(this.options[this.selectedIndex].dataset.items || '[]');
+function parseAngka(value) {
+    let raw = String(value ?? '').trim();
+    if (!raw) return 0;
+
+    raw = raw.replace(/[^\d.,-]/g, '');
+    const dotCount = (raw.match(/\./g) || []).length;
+    const commaCount = (raw.match(/,/g) || []).length;
+
+    if (dotCount > 0 && commaCount > 0) {
+        return parseFloat(raw.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+    if (commaCount > 0) {
+        const parts = raw.split(',');
+        if (parts.length === 2 && parts[1].length === 3) {
+            return parseFloat(parts.join('')) || 0;
+        }
+        return parseFloat(raw.replace(',', '.')) || 0;
+    }
+    if (dotCount > 0) {
+        const parts = raw.split('.');
+        if (parts.length > 2) {
+            return parseFloat(parts.join('')) || 0;
+        }
+        if (parts.length === 2 && parts[1].length === 3) {
+            return parseFloat(parts.join('')) || 0;
+        }
+        return parseFloat(raw) || 0;
+    }
+    return parseFloat(raw) || 0;
+}
+
+function formatRp(n) {
+    return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+}
+
+function renderDetailPenerimaan() {
+    const selectPo = document.getElementById('select-po');
+    const selectedOption = selectPo.options[selectPo.selectedIndex];
+    const items = JSON.parse(selectedOption?.dataset.items || '[]');
     const tbody = document.getElementById('tbody-penerimaan');
     tbody.innerHTML = '';
-    if (items.length > 0) {
-        items.forEach(item => {
-            const row = document.createElement('tr');
-            row.className = 'hover:bg-neutral-50 transition';
-            row.innerHTML = `
-                <td class="px-6 py-3">
-                    <input type="hidden" name="barang_id[]" value="${item.id}">
-                    <p class="font-semibold text-sm mb-0 dark:text-white">${item.nama}</p>
-                    <p class="text-xs text-secondary-light mb-0">${item.kode}</p>
-                </td>
-                <td class="px-6 py-3 text-center text-sm text-secondary-light">${parseFloat(item.jumlah).toLocaleString('id-ID')} ${item.satuan}</td>
-                <td class="px-6 py-3">
-                    <div class="flex items-center gap-2">
-                        <input type="number" name="jumlah_diterima[]" class="input-jml w-28 px-3 py-2 rounded-lg border border-neutral-300 text-sm bg-white focus:outline-none" min="0" value="${item.jumlah}" step="0.01">
-                        <span class="text-xs text-secondary-light">${item.satuan}</span>
-                    </div>
-                </td>
-                <td class="px-6 py-3">
-                    <input type="text" name="harga_satuan[]" class="input-harga input-ribuan w-36 px-3 py-2 rounded-lg border border-neutral-300 text-sm bg-white focus:outline-none" min="0" value="${window.formatRibuan ? window.formatRibuan(item.harga) : item.harga}">
-                </td>
-                <td class="px-6 py-3 text-right font-bold text-sm sub-label">Rp 0</td>
-            `;
-            tbody.appendChild(row);
-            const hitung = () => {
-                const j = parseFloat(row.querySelector('.input-jml').value)||0;
-                const h = parseFloat(row.querySelector('.input-harga').value.replace(/\./g, ''))||0;
-                row.querySelector('.sub-label').textContent = 'Rp ' + Math.round(j*h).toLocaleString('id-ID');
-            };
-            hitung();
-            row.querySelector('.input-jml').addEventListener('input', hitung);
-            row.querySelector('.input-harga').addEventListener('input', hitung);
-        });
-        document.getElementById('section-detail').style.display = '';
-        document.getElementById('section-submit').style.display = '';
-    } else {
+
+    if (items.length === 0) {
         document.getElementById('section-detail').style.display = 'none';
         document.getElementById('section-submit').style.display = 'none';
+        return;
     }
-});
+
+    items.forEach(item => {
+        const hargaAwal = Math.round(parseAngka(item.harga));
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-neutral-50 transition';
+        row.innerHTML = `
+            <td class="px-6 py-3">
+                <input type="hidden" name="barang_id[]" value="${item.id}">
+                <p class="font-semibold text-sm mb-0 dark:text-white">${item.nama}</p>
+                <p class="text-xs text-secondary-light mb-0">${item.kode}</p>
+            </td>
+            <td class="px-6 py-3 text-center text-sm text-secondary-light">${parseFloat(item.jumlah).toLocaleString('id-ID')} ${item.satuan}</td>
+            <td class="px-6 py-3">
+                <div class="flex items-center gap-2">
+                    <input type="number" name="jumlah_diterima[]" class="input-jml w-28 px-3 py-2 rounded-lg border border-neutral-300 text-sm bg-white focus:outline-none" min="0" value="${item.jumlah}" step="0.01">
+                    <span class="text-xs text-secondary-light">${item.satuan}</span>
+                </div>
+            </td>
+            <td class="px-6 py-3">
+                <input type="text" name="harga_satuan[]" class="input-harga input-ribuan w-36 px-3 py-2 rounded-lg border border-neutral-300 text-sm bg-white focus:outline-none" min="0" value="${window.formatRibuan ? window.formatRibuan(hargaAwal) : hargaAwal}">
+            </td>
+            <td class="px-6 py-3 text-right font-bold text-sm sub-label">Rp 0</td>
+        `;
+        tbody.appendChild(row);
+
+        const hitung = () => {
+            const j = parseFloat(row.querySelector('.input-jml').value) || 0;
+            const h = Math.round(parseAngka(row.querySelector('.input-harga').value));
+            row.querySelector('.sub-label').textContent = formatRp(j * h);
+        };
+
+        hitung();
+        row.querySelector('.input-jml').addEventListener('input', hitung);
+        row.querySelector('.input-harga').addEventListener('input', hitung);
+        row.querySelector('.input-harga').addEventListener('blur', function() {
+            const h = Math.round(parseAngka(this.value));
+            this.value = window.formatRibuan ? window.formatRibuan(h) : h;
+            hitung();
+        });
+    });
+
+    document.getElementById('section-detail').style.display = '';
+    document.getElementById('section-submit').style.display = '';
+}
+
+document.getElementById('select-po').addEventListener('change', renderDetailPenerimaan);
+renderDetailPenerimaan();
 </script>
 @endpush

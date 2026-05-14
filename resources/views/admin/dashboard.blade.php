@@ -102,7 +102,7 @@
             <div class="flex-1 min-w-0">
                 <p class="text-secondary-light text-sm mb-1">Keuntungan Bulan Ini</p>
                 <h4 class="font-bold text-xl {{ $stats['nilai_keuntungan'] >= 0 ? 'text-success-600' : 'text-red-500' }} mb-0">Rp {{ number_format($stats['nilai_keuntungan'],0,',','.') }}</h4>
-                <p class="text-xs text-secondary-light mb-0">Penjualan - pembelian - pengeluaran</p>
+                <p class="text-xs text-secondary-light mb-0">Penjualan − HPP (harga pokok dari mutasi gudang) − pengeluaran</p>
             </div>
         </div>
     </div>
@@ -130,7 +130,7 @@
             <iconify-icon icon="ri:funds-line" class="text-success-600 text-lg"></iconify-icon>
             <h6 class="font-semibold mb-0 dark:text-white text-sm">Grafik Keuntungan (6 Bulan)</h6>
         </div>
-        <span class="text-xs text-secondary-light">Penjualan - Pembelian - Pengeluaran</span>
+        <span class="text-xs text-secondary-light">Penjualan − HPP − Pengeluaran</span>
     </div>
     <div class="p-5">
         <div id="chart-profit"></div>
@@ -372,7 +372,7 @@ $permintaanLabels = json_encode(array_column($permintaanChart, 'label'));
 $permintaanValues = json_encode(array_column($permintaanChart, 'count'));
 $profitLabels     = json_encode(array_column($profitChart, 'label'));
 $profitPenjualan  = json_encode(array_column($profitChart, 'penjualan'));
-$profitPembelian  = json_encode(array_column($profitChart, 'pembelian'));
+$profitHpp        = json_encode(array_column($profitChart, 'hpp'));
 $profitPengeluaran= json_encode(array_column($profitChart, 'pengeluaran'));
 $profitKeuntungan = json_encode(array_column($profitChart, 'keuntungan'));
 $poStatusMap      = [
@@ -420,7 +420,7 @@ const optProfit = {
     chart: { type: 'line', height: 320, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
     series: [
         { name: 'Penjualan', data: {!! $profitPenjualan !!} },
-        { name: 'Pembelian', data: {!! $profitPembelian !!} },
+        { name: 'HPP', data: {!! $profitHpp !!} },
         { name: 'Pengeluaran', data: {!! $profitPengeluaran !!} },
         { name: 'Keuntungan', data: {!! $profitKeuntungan !!} },
     ],

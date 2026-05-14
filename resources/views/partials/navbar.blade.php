@@ -130,14 +130,14 @@
                         <ul class="flex flex-col">
                             <li>
                                 <a class="text-black dark:text-white px-0 py-2 hover:text-primary-600 flex items-center gap-4"
-                                    href="#">
+                                    href="{{ route('profile.index') }}">
                                     <iconify-icon icon="solar:user-linear" class="icon text-xl"></iconify-icon>
                                     Profil Saya
                                 </a>
                             </li>
                             <li>
                                 <a class="text-black dark:text-white px-0 py-2 hover:text-primary-600 flex items-center gap-4"
-                                    href="#">
+                                    href="{{ route('profile.settings') }}">
                                     <iconify-icon icon="icon-park-outline:setting-two"
                                         class="icon text-xl"></iconify-icon>
                                     Pengaturan

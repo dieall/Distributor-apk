@@ -19,6 +19,7 @@ class User extends Authenticatable
         'role',
         'is_active',
         'phone',
+        'address',
         'avatar',
     ];
 
@@ -66,29 +67,51 @@ class User extends Authenticatable
         return $this->role === 'pelanggan';
     }
 
+    // Role Sawit Methods
+    public function isAdminSawit(): bool
+    {
+        return $this->role === 'adminsawit';
+    }
+
+    public function isAccountingSawit(): bool
+    {
+        return $this->role === 'accountingsawit';
+    }
+
+    public function isDirekturSawit(): bool
+    {
+        return $this->role === 'direktursawit';
+    }
+
     public function getRoleLabelAttribute(): string
     {
         return match($this->role) {
-            'admin'     => 'Administrator',
-            'direktur'  => 'Direktur',
-            'gudang'    => 'Gudang',
-            'sales'      => 'Sales',
-            'purchasing' => 'Purchasing',
-            'pelanggan'  => 'Pelanggan',
-            default     => ucfirst($this->role),
+            'admin'            => 'Administrator',
+            'direktur'         => 'Direktur',
+            'gudang'           => 'Gudang',
+            'sales'            => 'Sales',
+            'purchasing'       => 'Purchasing',
+            'pelanggan'        => 'Pelanggan',
+            'adminsawit'       => 'Admin Sawit',
+            'accountingsawit'  => 'Accounting Sawit',
+            'direktursawit'    => 'Direktur Sawit',
+            default            => ucfirst($this->role),
         };
     }
 
     public function getDashboardRoute(): string
     {
         return match($this->role) {
-            'admin'     => 'admin.dashboard',
-            'direktur'  => 'admin.dashboard',
-            'gudang'    => 'gudang.dashboard',
-            'sales'      => 'sales.dashboard',
-            'purchasing' => 'purchasing.dashboard',
-            'pelanggan'  => 'pelanggan.dashboard',
-            default     => 'login',
+            'admin'            => 'admin.dashboard',
+            'direktur'         => 'admin.dashboard',
+            'gudang'           => 'gudang.dashboard',
+            'sales'            => 'sales.dashboard',
+            'purchasing'       => 'purchasing.dashboard',
+            'pelanggan'        => 'pelanggan.dashboard',
+            'adminsawit'       => 'sawit.admin.dashboard',
+            'accountingsawit'  => 'sawit.accounting.dashboard',
+            'direktursawit'    => 'sawit.direktur.dashboard',
+            default            => 'login',
         };
     }
 }

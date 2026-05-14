@@ -74,33 +74,11 @@
             </div>
 
             {{-- Preview setelah upload (compact horizontal) --}}
-            <div id="upload-preview" class="hidden text-left bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl p-3 inline-block min-w-[280px]">
-                <div class="flex items-center gap-4">
-                    {{-- Thumbnail gambar --}}
-                    <div id="preview-img-wrap" class="w-16 h-16 rounded-lg overflow-hidden border border-neutral-200 flex-shrink-0 bg-neutral-100 flex items-center justify-center">
-                        <img id="preview-img" src="" alt="Preview" class="max-w-full max-h-full object-contain">
-                    </div>
-                    {{-- Icon PDF --}}
-                    <div id="preview-pdf" class="hidden w-16 h-16 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
-                        <iconify-icon icon="ri:file-pdf-line" class="text-red-500 text-3xl"></iconify-icon>
-                    </div>
-                    {{-- File info --}}
-                    <div class="flex-1 min-w-0 pr-4">
-                        <p id="preview-name" class="text-sm font-semibold text-neutral-800 dark:text-white mb-0.5 truncate"></p>
-                        <p id="preview-size" class="text-xs text-secondary-light mb-0"></p>
-                        <p class="text-xs text-success-600 flex items-center gap-1 mt-1 mb-0 font-medium">
-                            <iconify-icon icon="ri:checkbox-circle-fill"></iconify-icon> Siap diupload
-                        </p>
-                    </div>
-                    {{-- Tombol hapus --}}
-                    <button type="button" id="btn-remove-file" title="Hapus File"
-                        class="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center flex-shrink-0 transition-colors">
-                        <iconify-icon icon="ri:close-line" class="text-lg"></iconify-icon>
-                    </button>
-                </div>
+            <div id="upload-preview" class="hidden text-left flex flex-wrap gap-3 mt-4">
+                <!-- Preview items will be injected here -->
             </div>
 
-            <input type="file" name="bukti_pembayaran" id="input-bukti" accept="image/*,.pdf" class="hidden">
+            <input type="file" name="bukti_pembayaran[]" id="input-bukti" accept="image/*,.pdf" class="hidden" multiple>
         </div>
         @error('bukti_pembayaran')
         <p class="text-red-500 text-xs mt-2 flex items-center gap-1">
@@ -234,16 +212,13 @@ document.getElementById('btn-add-row').addEventListener('click', function() {
 </script>
 
 <script>
-// ===== Bukti Pembayaran Upload =====
-const dropZone   = document.getElementById('drop-zone');
-const inputBukti = document.getElementById('input-bukti');
+// ===== Bukti Pembayaran Upload (Multiple) =====
+const dropZone    = document.getElementById('drop-zone');
+const inputBukti  = document.getElementById('input-bukti');
 const placeholder = document.getElementById('upload-placeholder');
 const previewBox  = document.getElementById('upload-preview');
-const previewImg  = document.getElementById('preview-img');
-const previewPdf  = document.getElementById('preview-pdf');
-const previewName = document.getElementById('preview-name');
-const previewSize = document.getElementById('preview-size');
-const btnRemove   = document.getElementById('btn-remove-file');
+
+let selectedFiles = [];
 
 function formatBytes(bytes) {
     if (bytes < 1024) return bytes + ' B';
@@ -251,60 +226,101 @@ function formatBytes(bytes) {
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
-function showPreview(file) {
-    previewName.textContent = file.name;
-    previewSize.textContent = formatBytes(file.size);
+function updateInputFiles() {
+    const dt = new DataTransfer();
+    selectedFiles.forEach(file => dt.items.add(file));
+    inputBukti.files = dt.files;
+}
+
+function renderPreviews() {
+    previewBox.innerHTML = '';
+    
+    if (selectedFiles.length === 0) {
+        previewBox.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+        dropZone.classList.remove('border-warning-400', 'bg-warning-50', 'py-4');
+        dropZone.classList.add('border-dashed', 'border-neutral-300', 'py-8', 'text-center');
+        return;
+    }
+
     placeholder.classList.add('hidden');
     previewBox.classList.remove('hidden');
     dropZone.classList.remove('text-center', 'py-8');
-    dropZone.classList.add('py-4');
-    if (file.type === 'application/pdf') {
-        document.getElementById('preview-img-wrap').classList.add('hidden');
-        previewPdf.classList.remove('hidden');
-    } else {
-        previewPdf.classList.add('hidden');
-        document.getElementById('preview-img-wrap').classList.remove('hidden');
-        const reader = new FileReader();
-        reader.onload = e => previewImg.src = e.target.result;
-        reader.readAsDataURL(file);
-    }
-    dropZone.classList.add('border-warning-400', 'bg-warning-50');
+    dropZone.classList.add('py-4', 'border-warning-400', 'bg-warning-50');
     dropZone.classList.remove('border-dashed', 'border-neutral-300');
-}
 
-function resetUpload() {
-    inputBukti.value = '';
-    previewImg.src = '';
-    previewBox.classList.add('hidden');
-    placeholder.classList.remove('hidden');
-    dropZone.classList.remove('border-warning-400', 'bg-warning-50', 'py-4');
-    dropZone.classList.add('border-dashed', 'border-neutral-300', 'py-8', 'text-center');
+    selectedFiles.forEach((file, index) => {
+        const div = document.createElement('div');
+        div.className = 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl p-3 inline-flex items-center gap-3 w-full sm:w-[calc(50%-0.375rem)] lg:w-[calc(33.333%-0.5rem)]';
+        
+        let mediaHtml = '';
+        if (file.type === 'application/pdf') {
+            mediaHtml = `<div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                            <iconify-icon icon="ri:file-pdf-line" class="text-red-500 text-2xl"></iconify-icon>
+                         </div>`;
+        } else {
+            mediaHtml = `<div class="w-12 h-12 rounded-lg overflow-hidden border border-neutral-200 flex-shrink-0 bg-neutral-100 flex items-center justify-center">
+                            <img src="${URL.createObjectURL(file)}" alt="Preview" class="max-w-full max-h-full object-cover">
+                         </div>`;
+        }
+
+        div.innerHTML = `
+            ${mediaHtml}
+            <div class="flex-1 min-w-0 pr-2">
+                <p class="text-xs font-semibold text-neutral-800 dark:text-white mb-0.5 truncate">${file.name}</p>
+                <p class="text-[10px] text-secondary-light mb-0">${formatBytes(file.size)}</p>
+            </div>
+            <button type="button" class="btn-remove-file w-7 h-7 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center flex-shrink-0 transition-colors" data-index="${index}">
+                <iconify-icon icon="ri:close-line" class="text-base"></iconify-icon>
+            </button>
+        `;
+        previewBox.appendChild(div);
+    });
+
+    document.querySelectorAll('.btn-remove-file').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.getAttribute('data-index'));
+            selectedFiles.splice(idx, 1);
+            updateInputFiles();
+            renderPreviews();
+        });
+    });
 }
 
 // Click to open
 dropZone.addEventListener('click', (e) => {
-    if (e.target !== btnRemove && !btnRemove.contains(e.target)) inputBukti.click();
+    if (!e.target.closest('.btn-remove-file')) inputBukti.click();
 });
 
 // File selected
 inputBukti.addEventListener('change', () => {
-    if (inputBukti.files[0]) showPreview(inputBukti.files[0]);
+    if (inputBukti.files.length > 0) {
+        // Append new files up to max 5
+        Array.from(inputBukti.files).forEach(file => {
+            if (selectedFiles.length < 5) selectedFiles.push(file);
+        });
+        updateInputFiles();
+        renderPreviews();
+    }
 });
 
-// Remove
-btnRemove.addEventListener('click', (e) => { e.stopPropagation(); resetUpload(); });
-
 // Drag & drop
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-warning-400', 'bg-warning-50'); });
-dropZone.addEventListener('dragleave', () => { if (!inputBukti.files[0]) dropZone.classList.remove('border-warning-400', 'bg-warning-50'); });
+dropZone.addEventListener('dragover', e => { 
+    e.preventDefault(); 
+    dropZone.classList.add('border-warning-400', 'bg-warning-50'); 
+});
+dropZone.addEventListener('dragleave', () => { 
+    if (selectedFiles.length === 0) dropZone.classList.remove('border-warning-400', 'bg-warning-50'); 
+});
 dropZone.addEventListener('drop', e => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        inputBukti.files = dt.files;
-        showPreview(file);
+    if (e.dataTransfer.files.length > 0) {
+        Array.from(e.dataTransfer.files).forEach(file => {
+            if (selectedFiles.length < 5) selectedFiles.push(file);
+        });
+        updateInputFiles();
+        renderPreviews();
     }
 });
 </script>

@@ -13,9 +13,7 @@
 </div>
 
 @include('partials.alert')
-
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 space-y-6">
+<div class="w-full space-y-6">
         <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6">
             <h6 class="font-semibold text-sm text-secondary-light uppercase tracking-wide mb-4">Ringkasan</h6>
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
@@ -33,6 +31,17 @@
                     <dt class="text-secondary-light mb-1">Keterangan</dt>
                     <dd class="font-medium dark:text-white mb-0">{{ $pengeluaran->keterangan }}</dd>
                 </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-secondary-light mb-1">Tipe</dt>
+                    <dd class="font-medium dark:text-white mb-0">
+                        @if($pengeluaran->asetCicilan)
+                        <span class="text-primary-600">Bagian dari penyusutan aset</span>
+                        <a href="{{ fin_route('pengeluaran.aset.edit', $pengeluaran->asetCicilan->aset) }}" class="block text-xs text-primary-600 hover:underline mt-1">Buka jadwal aset: {{ $pengeluaran->asetCicilan->aset->keterangan ?? '—' }}</a>
+                        @else
+                        Pengeluaran biasa
+                        @endif
+                    </dd>
+                </div>
                 <div>
                     <dt class="text-secondary-light mb-1">Nominal</dt>
                     <dd class="text-xl font-bold text-red-500 mb-0">Rp {{ number_format($pengeluaran->nominal, 0, ',', '.') }}</dd>
@@ -49,13 +58,35 @@
         <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6">
             <h6 class="font-semibold text-sm text-secondary-light uppercase tracking-wide mb-4">Bukti</h6>
             @if($pengeluaran->bukti_foto)
+            @php
+                $rawPath = trim((string) $pengeluaran->bukti_foto);
+                if (filter_var($rawPath, FILTER_VALIDATE_URL)) {
+                    $urlPath = parse_url($rawPath, PHP_URL_PATH) ?? '';
+                    $normalizedPath = ltrim((string) $urlPath, '/');
+                } else {
+                    $normalizedPath = ltrim($rawPath, '/');
+                }
+
+                $normalizedPath = str_replace('\\', '/', $normalizedPath);
+                if (str_starts_with($normalizedPath, 'storage/')) {
+                    $normalizedPath = substr($normalizedPath, 8);
+                }
+                if (str_starts_with($normalizedPath, 'public/')) {
+                    $normalizedPath = substr($normalizedPath, 7);
+                }
+                $buktiUrl = fin_route('pengeluaran.bukti', ['path' => $normalizedPath]);
+            @endphp
             <div class="rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800">
-                <img src="{{ Storage::url($pengeluaran->bukti_foto) }}" alt="Bukti pengeluaran" class="w-full max-h-[520px] object-contain mx-auto">
+                <img src="{{ $buktiUrl }}" alt="Bukti pengeluaran" class="w-full max-h-[520px] object-contain mx-auto">
             </div>
-            <a href="{{ Storage::url($pengeluaran->bukti_foto) }}" target="_blank" rel="noopener"
+            <a href="{{ $buktiUrl }}" target="_blank" rel="noopener"
                 class="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700">
                 <iconify-icon icon="ri:external-link-line"></iconify-icon> Buka gambar di tab baru
             </a>
+            @elseif($pengeluaran->asetCicilan)
+            <p class="text-secondary-light text-sm mb-0">Bukti pembelian aset tersimpan di jadwal penyusutan.
+                <a href="{{ fin_route('pengeluaran.aset.edit', $pengeluaran->asetCicilan->aset) }}" class="text-primary-600 hover:underline">Lihat jadwal aset</a>
+            </p>
             @else
             <p class="text-secondary-light text-sm mb-0">Tidak ada lampiran bukti untuk pengeluaran ini.</p>
             @endif

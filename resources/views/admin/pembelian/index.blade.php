@@ -18,7 +18,7 @@
 
 <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-lg mb-6">
     <div class="card-body p-5">
-        <form method="GET" class="flex flex-wrap gap-3 items-end">
+        <form method="GET" class="flex flex-wrap gap-3 items-end">  
             <div class="flex-1 min-w-[200px]">
                 <label class="text-sm font-medium mb-1 block dark:text-white">Cari PO</label>
                 <div class="relative">
@@ -40,6 +40,10 @@
             </div>
             <div class="flex items-center gap-2">
                 <button type="submit" class="btn btn-primary btn-sm px-4 py-2">Filter</button>
+                <a href="{{ fin_route('pembelian.export', request()->only(['search', 'status'])) }}"
+                    class="btn btn-success btn-sm px-4 py-2 flex items-center gap-2">
+                    <iconify-icon icon="ri:file-excel-2-line"></iconify-icon> Export Excel
+                </a>
                 @if(!auth()->user()->isDirektur())
                 <a href="{{ fin_route('pembelian.create') }}" class="btn btn-success btn-sm px-4 py-2 flex items-center gap-2">
                     <iconify-icon icon="ri:add-line"></iconify-icon> Buat PO
@@ -83,9 +87,23 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-end">
-                            <a href="{{ fin_route('pembelian.show', $po) }}" class="btn btn-outline-primary btn-sm px-3 py-2 flex items-center gap-1 radius-6 inline-flex">
-                                <iconify-icon icon="ri:eye-line"></iconify-icon> Detail
-                            </a>
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ fin_route('pembelian.show', $po) }}" class="btn btn-outline-primary btn-sm px-3 py-2 flex items-center gap-1 radius-6">
+                                    <iconify-icon icon="ri:eye-line"></iconify-icon> Detail
+                                </a>
+                                @if(!auth()->user()->isDirektur())
+                                <a href="{{ fin_route('pembelian.edit', $po) }}" class="btn btn-outline-warning btn-sm px-3 py-2 flex items-center gap-1 radius-6">
+                                    <iconify-icon icon="ri:edit-line"></iconify-icon> Edit
+                                </a>
+                                <form action="{{ fin_route('pembelian.destroy', $po) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus PO ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm px-3 py-2 flex items-center gap-1 radius-6">
+                                        <iconify-icon icon="ri:delete-bin-line"></iconify-icon> Hapus
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty

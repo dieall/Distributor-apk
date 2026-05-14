@@ -40,13 +40,13 @@
         tfoot tr.total-row td { border-top: 2px solid #166534; padding: 9px 10px; font-size: 14px; font-weight: 800; color: #166534; }
 
         /* Notes / Terms */
-        .footer-section { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+        .footer-section { margin-top: 8px; }
+        .footer-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; align-items: end; }
         .terms-box { border: 1px solid #d0d5dd; border-radius: 6px; padding: 10px 14px; }
         .terms-box h4 { font-size: 9px; text-transform: uppercase; color: #888; letter-spacing: .8px; font-weight: 700; margin-bottom: 6px; }
         .terms-box p { font-size: 10px; color: #555; line-height: 1.6; }
 
         /* TTD */
-        .ttd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
         .ttd-box { border: 1px solid #d0d5dd; border-radius: 6px; padding: 10px 14px; text-align: center; }
         .ttd-box .role { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #166534; margin-bottom: 46px; }
         .ttd-box .line { border-top: 1px solid #999; padding-top: 6px; font-size: 10px; color: #555; }
@@ -61,6 +61,18 @@
 <body>
 @php
     $c = config('company');
+    $companyName = $printData['company_name'] ?? ($c['legal_name'] ?? '');
+    $defaultCompanyAddress = ($c['address'] ?? '') . (!empty($c['phone']) ? ' | Telp: ' . $c['phone'] : '');
+    $companyAddress = $printData['company_address'] ?? $defaultCompanyAddress;
+    $bankName = $printData['bank_name'] ?? 'BCA / Mandiri';
+    $bankAccountNumber = $printData['bank_account_number'] ?? '123-456-789';
+    $bankAccountHolder = $printData['bank_account_holder'] ?? $companyName;
+    $billToName = $printData['bill_to_name'] ?? ($permintaan->pelanggan->name ?? '');
+    $billToPhone = $printData['bill_to_phone'] ?? ($permintaan->pelanggan->phone ?? '');
+    $billToAddress = $printData['bill_to_address'] ?? ($permintaan->pelanggan->address ?? '');
+    $invoiceDate = \Illuminate\Support\Carbon::parse(
+        $printData['invoice_date'] ?? optional($permintaan->tanggal_request)->format('Y-m-d')
+    );
 @endphp
 <div class="page">
 
@@ -76,14 +88,14 @@
     {{-- Header --}}
     <div class="header">
         <div>
-            <div class="company-name">{{ $c['legal_name'] }}</div>
+            <div class="company-name">{{ $companyName }}</div>
             <div class="company-sub">{{ $c['tagline'] }}</div>
-            <div class="company-sub">{{ $c['address'] }}@if(! empty($c['phone'])) | Telp: {{ $c['phone'] }}@endif</div>
+            <div class="company-sub">{{ $companyAddress }}</div>
         </div>
         <div class="doc-title">
             <h2>Invoice</h2>
-            <div class="inv-no">{{ $permintaan->no_permintaan }}</div>
-            <div class="inv-date">Tanggal: {{ $permintaan->tanggal_request->format('d F Y') }}</div>
+            <div class="inv-no">{{ str_replace('REQ', 'INV', $permintaan->no_permintaan) }}</div>
+            <div class="inv-date">Tanggal: {{ $invoiceDate->translatedFormat('d F Y') }}</div>
         </div>
     </div>
 
@@ -91,12 +103,12 @@
     <div class="billing-grid">
         <div class="billing-box">
             <h4>Tagihan Kepada</h4>
-            <div class="name">{{ $permintaan->pelanggan->name }}</div>
-            @if($permintaan->pelanggan->phone ?? null)
-            <div class="sub">{{ $permintaan->pelanggan->phone }}</div>
+            <div class="name">{{ $billToName }}</div>
+            @if($billToPhone)
+            <div class="sub">{{ $billToPhone }}</div>
             @endif
-            @if($permintaan->pelanggan->address ?? null)
-            <div class="sub">{{ $permintaan->pelanggan->address }}</div>
+            @if($billToAddress)
+            <div class="sub">{{ $billToAddress }}</div>
             @endif
             <div class="meta-row">
                 @if($permintaan->suratJalan)
@@ -108,6 +120,9 @@
         <div class="billing-box">
             <h4>Informasi Invoice</h4>
             <div class="sub" style="margin-bottom:4px;"><strong>No. Permintaan:</strong> <span style="font-family:monospace;">{{ $permintaan->no_permintaan }}</span></div>
+            @if(!empty($printData['no_po_customer']))
+            <div class="sub" style="margin-bottom:4px;"><strong>No. PO Customer:</strong> <span style="font-family:monospace;">{{ $printData['no_po_customer'] }}</span></div>
+            @endif
             @if($permintaan->tanggal_dibutuhkan)
             <div class="sub"><strong>Tgl. Dibutuhkan:</strong> {{ $permintaan->tanggal_dibutuhkan->format('d F Y') }}</div>
             @endif
@@ -170,29 +185,23 @@
             <h4>Catatan</h4>
             <p>{{ $permintaan->catatan ?: 'Terima kasih atas kepercayaan Anda menggunakan layanan kami.' }}</p>
         </div>
-        <div class="terms-box">
-            <h4>Informasi Pembayaran</h4>
-            <p>Bank : <strong>BCA / Mandiri</strong><br>
-            No. Rek : <strong>123-456-789</strong><br>
-            Atas Nama : <strong>{{ $c['legal_name'] }}</strong><br>
-            Mohon sertakan nomor permintaan saat transfer.</p>
-        </div>
-    </div>
-
-    {{-- TTD --}}
-    <div class="ttd-grid">
-        <div class="ttd-box">
-            <div class="role">Hormat Kami</div>
-            <div class="line">{{ $c['legal_name'] }}</div>
-        </div>
-        <div class="ttd-box">
-            <div class="role">Penerima / Pelanggan</div>
-            <div class="line">{{ $permintaan->pelanggan->name }}</div>
+        <div class="footer-bottom">
+            <div class="terms-box">
+                <h4>Informasi Pembayaran</h4>
+                <p>Bank : <strong>{{ $bankName }}</strong><br>
+                No. Rek : <strong>{{ $bankAccountNumber }}</strong><br>
+                Atas Nama : <strong>{{ $bankAccountHolder }}</strong><br>
+                Mohon sertakan nomor permintaan saat transfer.</p>
+            </div>
+            <div class="ttd-box">
+                <div class="role">Hormat Kami</div>
+                <div class="line">{{ $companyName }}</div>
+            </div>
         </div>
     </div>
 
     <p style="margin-top:18px; font-size:10px; color:#999; text-align:center;">
-        Invoice ini diterbitkan pada {{ now()->format('d F Y, H:i') }} WIB &mdash; {{ $c['legal_name'] }}
+        Invoice ini diterbitkan pada {{ $invoiceDate->translatedFormat('d F Y') }} &mdash; {{ $companyName }}
     </p>
 </div>
 </body>

@@ -28,6 +28,12 @@
         <p class="text-xs text-secondary-light font-medium mb-1">Tanggal Request</p>
         <p class="font-medium text-sm dark:text-white mb-0">{{ $permintaan->tanggal_request->format('d M Y') }}</p>
     </div>
+    @if($permintaan->no_po_customer)
+    <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-4">
+        <p class="text-xs text-secondary-light font-medium mb-1">No. PO Customer</p>
+        <p class="font-bold text-primary-600 text-sm font-mono mb-0">{{ $permintaan->no_po_customer }}</p>
+    </div>
+    @endif
     @if($permintaan->tanggal_dibutuhkan)
     <div class="card shadow-none border border-warning-200 bg-warning-50 dark:bg-neutral-700 dark:border-neutral-600 rounded-xl p-4">
         <p class="text-xs text-warning-600 font-medium mb-1">Dibutuhkan Sebelum</p>

@@ -7,7 +7,7 @@
         <h6 class="font-semibold mb-0 dark:text-white">Pengeluaran Operasional</h6>
         <p class="text-secondary-light text-sm mb-0 mt-1">Catat biaya harian untuk perhitungan keuntungan.</p>
     </div>
-    <div class="flex items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2">
         <a href="{{ fin_route('pengeluaran.export', request()->only(['bulan', 'search'])) }}"
            class="px-4 py-2 rounded-lg bg-success-600 hover:bg-success-700 text-white text-sm font-medium flex items-center gap-2">
             <iconify-icon icon="ri:file-excel-2-line"></iconify-icon> Export Excel
@@ -15,6 +15,9 @@
         @if(!auth()->user()->isDirektur())
         <a href="{{ fin_route('pengeluaran.create') }}" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium flex items-center gap-2">
             <iconify-icon icon="ri:add-line"></iconify-icon> Tambah Pengeluaran
+        </a>
+        <a href="{{ fin_route('pengeluaran.aset.index') }}" class="px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 flex items-center gap-2">
+            <iconify-icon icon="ri:calendar-todo-line"></iconify-icon> Penyusutan aset
         </a>
         @endif
     </div>

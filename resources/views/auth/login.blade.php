@@ -91,16 +91,10 @@
                 </button>
             </form>
 
-            <div class="mt-8 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700">
-                <p class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide mb-2">Peran di sistem</p>
-                <p class="text-sm text-secondary-light mb-0 leading-relaxed">
-                    Admin, Gudang, Sales, Purchasing, dan Pelanggan menggunakan halaman login yang sama.
-                    Data supplier hanya berupa nama PT di menu Data Supplier &mdash; <strong class="text-neutral-700 dark:text-neutral-200">tanpa akun login</strong>.
-                </p>
-            </div>
+          
 
             <p class="text-center text-sm text-secondary-light mt-8 mb-0">
-                &copy; {{ date('Y') }} Distributor APK
+                &copy; {{ date('Y') }} CV Binuangeun Indah
             </p>
         </div>
     </div>

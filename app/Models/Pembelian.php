@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Pembelian extends Model {
     protected $table = 'pembelian';
     protected $fillable = ['no_po','supplier_id','dibuat_oleh','tanggal','tanggal_kirim_estimasi','status','total','catatan','bukti_pembayaran'];
-    protected $casts = ['tanggal' => 'date', 'tanggal_kirim_estimasi' => 'date', 'total' => 'decimal:2'];
+    protected $casts = ['tanggal' => 'date', 'tanggal_kirim_estimasi' => 'date', 'total' => 'decimal:2', 'bukti_pembayaran' => 'array'];
 
     public function supplier(): BelongsTo { return $this->belongsTo(Supplier::class, 'supplier_id'); }
     public function dibuatOleh(): BelongsTo { return $this->belongsTo(User::class, 'dibuat_oleh'); }

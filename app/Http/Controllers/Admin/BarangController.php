@@ -34,7 +34,22 @@ class BarangController extends Controller
     public function create()
     {
         abort_if(auth()->user()->isDirektur(), 403, 'Direktur hanya dapat melihat data.');
-        return view('admin.barang.create');
+
+        $latestBarang = Barang::orderBy('id', 'desc')->first();
+        $nextNumber = 1;
+
+        if ($latestBarang) {
+            preg_match('/(\d+)$/', $latestBarang->kode, $matches);
+            if (!empty($matches)) {
+                $nextNumber = intval($matches[1]) + 1;
+            } else {
+                $nextNumber = $latestBarang->id + 1;
+            }
+        }
+
+        $autoKode = 'BRG-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+
+        return view('admin.barang.create', compact('autoKode'));
     }
 
     public function store(Request $request)

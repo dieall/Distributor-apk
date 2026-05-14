@@ -29,9 +29,89 @@
 
 @php
     $subtotal = $permintaan->detail->where('is_checked', true)->sum('subtotal_jual');
+    $c = config('company');
+    $defaultCompanyAddress = ($c['address'] ?? '') . (!empty($c['phone']) ? ' | Telp: ' . $c['phone'] : '');
+
+    $invoicePrintDefaults = [
+        'company_name' => request('company_name', $c['legal_name'] ?? ''),
+        'company_address' => request('company_address', $defaultCompanyAddress),
+        'invoice_date' => request('invoice_date', optional($permintaan->tanggal_request)->format('Y-m-d')),
+        'bank_name' => request('bank_name', 'BCA / Mandiri'),
+        'bank_account_number' => request('bank_account_number', '123-456-789'),
+        'bank_account_holder' => request('bank_account_holder', $c['legal_name'] ?? ''),
+        'receiver_name' => request('receiver_name', $permintaan->pelanggan->name ?? ''),
+        'bill_to_name' => request('bill_to_name', $permintaan->pelanggan->name ?? ''),
+        'bill_to_phone' => request('bill_to_phone', $permintaan->pelanggan->phone ?? ''),
+        'bill_to_address' => request('bill_to_address', $permintaan->pelanggan->address ?? ''),
+        'no_po_customer' => request('no_po_customer', $permintaan->no_po_customer ?? ''),
+    ];
 @endphp
 
 <div class="w-full space-y-6">
+    <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6 w-full">
+        <div class="flex items-center justify-between gap-2 mb-4">
+            <p class="text-xs font-bold uppercase text-secondary-light tracking-wide mb-0">Pengaturan Cetak Invoice</p>
+        </div>
+        <form method="GET" action="{{ route('admin.invoice.show', $permintaan) }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+                <label class="form-label text-xs">Nama Perusahaan (Header)</label>
+                <input type="text" name="company_name" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['company_name'] }}" placeholder="Contoh: CV. Binuangeun Indah">
+            </div>
+            <div class="md:col-span-1 lg:col-span-2">
+                <label class="form-label text-xs">Alamat Perusahaan (Header)</label>
+                <input type="text" name="company_address" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['company_address'] }}" placeholder="Contoh: Jl. Serang-Cilegon...">
+            </div>
+            <div>
+                <label class="form-label text-xs">Tagihan Kepada - Nama</label>
+                <input type="text" name="bill_to_name" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['bill_to_name'] }}" placeholder="Contoh: Ikna Wijaya">
+            </div>
+            <div>
+                <label class="form-label text-xs">Tagihan Kepada - Telepon</label>
+                <input type="text" name="bill_to_phone" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['bill_to_phone'] }}" placeholder="Contoh: 089610854904">
+            </div>
+            <div class="lg:col-span-2">
+                <label class="form-label text-xs">Tagihan Kepada - Alamat</label>
+                <input type="text" name="bill_to_address" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['bill_to_address'] }}" placeholder="Alamat pelanggan">
+            </div>
+            <div>
+                <label class="form-label text-xs">No. PO Customer</label>
+                <input type="text" name="no_po_customer" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['no_po_customer'] }}" placeholder="Terisi otomatis dari permintaan (No. PO Customer)">
+            </div>
+            <div>
+                <label class="form-label text-xs">Tanggal Invoice</label>
+                <input type="date" name="invoice_date" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['invoice_date'] }}">
+            </div>
+            <div>
+                <label class="form-label text-xs">Bank</label>
+                <input type="text" name="bank_name" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['bank_name'] }}" placeholder="Contoh: BCA / Mandiri">
+            </div>
+            <div>
+                <label class="form-label text-xs">No. Rekening</label>
+                <input type="text" name="bank_account_number" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['bank_account_number'] }}" placeholder="Contoh: 123-456-789">
+            </div>
+            <div>
+                <label class="form-label text-xs">Atas Nama (Pembayaran)</label>
+                <input type="text" name="bank_account_holder" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['bank_account_holder'] }}" placeholder="Contoh: CV. Binuangeun Indah">
+            </div>
+            <div>
+                <label class="form-label text-xs">Nama Tanda Tangan Penerima</label>
+                <input type="text" name="receiver_name" class="form-control form-control-sm" value="{{ $invoicePrintDefaults['receiver_name'] }}" placeholder="Contoh: Ikna Wijaya">
+            </div>
+            <div class="md:col-span-2 lg:col-span-3 flex flex-wrap gap-2 pt-2">
+                <button type="submit" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium">
+                    Terapkan ke Preview
+                </button>
+                <a href="{{ route('admin.invoice.show', $permintaan) }}" class="px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-500 text-sm font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100">
+                    Reset Default
+                </a>
+                <a href="{{ route('admin.invoice.print', $permintaan) . '?' . http_build_query($invoicePrintDefaults) }}" target="_blank"
+                    class="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-900 text-white text-sm font-medium flex items-center gap-2">
+                    <iconify-icon icon="ri:printer-line"></iconify-icon> Cetak dengan Pengaturan Ini
+                </a>
+            </div>
+        </form>
+    </div>
+
     {{-- Bill To & meta — lebar penuh --}}
     <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-6 w-full">
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
@@ -55,6 +135,12 @@
                 <p class="text-secondary-light mb-1 text-xs">No. Permintaan</p>
                 <p class="font-bold dark:text-white font-mono text-xs mb-0">{{ $permintaan->no_permintaan }}</p>
             </div>
+            @if($permintaan->no_po_customer)
+            <div>
+                <p class="text-secondary-light mb-1 text-xs">No. PO Customer</p>
+                <p class="font-bold dark:text-white font-mono text-xs mb-0">{{ $permintaan->no_po_customer }}</p>
+            </div>
+            @endif
             @if($permintaan->suratJalan)
             <div>
                 <p class="text-secondary-light mb-1 text-xs">No. Surat Jalan</p>
@@ -116,21 +202,39 @@
                         <th class="text-right px-5 py-3 text-xs font-semibold text-secondary-light uppercase">Qty</th>
                         <th class="text-right px-5 py-3 text-xs font-semibold text-secondary-light uppercase">Harga Satuan</th>
                         <th class="text-right px-5 py-3 text-xs font-semibold text-secondary-light uppercase">Subtotal</th>
+                        <th class="text-right px-5 py-3 text-xs font-semibold text-secondary-light uppercase">Koreksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-neutral-100 dark:divide-neutral-600">
                     @php $total = 0; $no = 1; @endphp
                     @foreach($permintaan->detail->where('is_checked', true) as $d)
                     @php $total += $d->subtotal_jual; @endphp
+                    @php $formId = 'invoice-item-form-' . $d->id; @endphp
                     <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-600/40">
                         <td class="px-5 py-3 text-secondary-light">{{ $no++ }}</td>
                         <td class="px-5 py-3">
                             <p class="font-semibold dark:text-white mb-0 text-sm">{{ $d->barang->nama }}</p>
                             <p class="text-xs text-secondary-light mb-0">{{ $d->barang->kode }}</p>
                         </td>
-                        <td class="px-5 py-3 text-right text-sm dark:text-white whitespace-nowrap">{{ format_qty_id($d->jumlah_disetujui) }} {{ $d->barang->satuan }}</td>
-                        <td class="px-5 py-3 text-right text-sm dark:text-white whitespace-nowrap">Rp {{ number_format($d->harga_jual,0,',','.') }}</td>
+                        <td class="px-5 py-3 text-right text-sm dark:text-white whitespace-nowrap">
+                            <div class="flex items-center justify-end gap-2">
+                                <input type="number" name="jumlah_disetujui" form="{{ $formId }}" class="form-control form-control-sm text-right w-28" min="0.01" step="0.01" value="{{ $d->jumlah_disetujui }}">
+                                <span class="text-secondary-light">{{ $d->barang->satuan }}</span>
+                            </div>
+                        </td>
+                        <td class="px-5 py-3 text-right text-sm dark:text-white whitespace-nowrap">
+                            <input type="number" name="harga_jual" form="{{ $formId }}" class="form-control form-control-sm text-right w-32 ml-auto" min="0" step="1" value="{{ $d->harga_jual }}">
+                        </td>
                         <td class="px-5 py-3 text-right font-bold text-success-600 whitespace-nowrap">Rp {{ number_format($d->subtotal_jual,0,',','.') }}</td>
+                        <td class="px-5 py-3 text-right whitespace-nowrap">
+                            <form id="{{ $formId }}" method="POST" action="{{ route('admin.invoice.items.update', [$permintaan, $d]) }}" onsubmit="return confirm('Simpan koreksi item ini? Stok, surat jalan, subtotal, dan total invoice akan disesuaikan.');">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="px-3 py-1.5 rounded-lg bg-warning-600 hover:bg-warning-700 text-white text-xs font-semibold">
+                                    Simpan
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -138,6 +242,7 @@
                     <tr class="bg-neutral-50 dark:bg-neutral-800">
                         <td colspan="4" class="px-5 py-4 text-right text-sm font-bold dark:text-white">Total</td>
                         <td class="px-5 py-4 text-right font-bold text-success-600 text-xl whitespace-nowrap">Rp {{ number_format($total,0,',','.') }}</td>
+                        <td class="px-5 py-4"></td>
                     </tr>
                 </tfoot>
             </table>

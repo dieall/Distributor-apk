@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 @section('title', 'Permintaan Barang')
 
 @section('content')
@@ -7,11 +7,16 @@
         <h6 class="font-semibold mb-0">Permintaan Barang</h6>
         <p class="text-secondary-light text-sm mb-0 mt-1">Kelola permintaan barang dari pelanggan</p>
     </div>
-    <ul class="flex items-center gap-2">
-        <li class="font-medium"><a href="{{ route('sales.dashboard') }}" class="flex items-center gap-1 hover:text-primary-600"><iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>Dashboard</a></li>
-        <li>-</li>
-        <li class="font-medium text-neutral-500">Permintaan Barang</li>
-    </ul>
+    <div class="flex items-center gap-3">
+        <ul class="flex items-center gap-2">
+            <li class="font-medium"><a href="{{ route('sales.dashboard') }}" class="flex items-center gap-1 hover:text-primary-600"><iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>Dashboard</a></li>
+            <li>-</li>
+            <li class="font-medium text-neutral-500">Permintaan Barang</li>
+        </ul>
+        <a href="{{ route('sales.permintaan.create') }}" class="btn btn-primary btn-sm px-4 py-2 flex items-center gap-2">
+            <iconify-icon icon="ri:add-line"></iconify-icon> Buat Permintaan
+        </a>
+    </div>
 </div>
 
 @include('partials.alert')
@@ -114,10 +119,24 @@
                             </span>
                         </td>
                         <td class="px-6 py-4">
-                            <a href="{{ route('sales.permintaan.show', $item) }}" class="btn btn-outline-primary btn-sm px-10 py-6 flex items-center gap-1 inline-flex">
-                                <iconify-icon icon="ri:eye-line"></iconify-icon>
-                                @if($item->status === 'pending') Proses @else Detail @endif
-                            </a>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('sales.permintaan.show', $item) }}" class="btn btn-outline-primary btn-sm px-10 py-6 flex items-center gap-1 inline-flex">
+                                    <iconify-icon icon="ri:eye-line"></iconify-icon>
+                                    @if($item->status === 'pending') Proses @else Detail @endif
+                                </a>
+                                @if($item->status === 'pending')
+                                <a href="{{ route('sales.permintaan.edit', $item) }}" class="btn btn-outline-warning btn-sm px-10 py-6 flex items-center gap-1 inline-flex">
+                                    <iconify-icon icon="ri:edit-line"></iconify-icon>
+                                </a>
+                                <form action="{{ route('sales.permintaan.destroy', $item) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus permintaan ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm px-10 py-6 flex items-center gap-1 inline-flex">
+                                        <iconify-icon icon="ri:delete-bin-line"></iconify-icon>
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty

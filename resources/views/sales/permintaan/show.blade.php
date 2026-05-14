@@ -45,6 +45,17 @@
     @endif
 </div>
 
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+    <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-4">
+        <p class="text-xs text-secondary-light font-medium mb-1">Alamat Pengiriman</p>
+        <p class="font-medium text-sm dark:text-white mb-0">{{ $permintaan->alamat ?? '-' }}</p>
+    </div>
+    <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl p-4">
+        <p class="text-xs text-secondary-light font-medium mb-1">Nomor Handphone</p>
+        <p class="font-medium text-sm dark:text-white mb-0">{{ $permintaan->no_hp ?? '-' }}</p>
+    </div>
+</div>
+
 @if($permintaan->catatan)
 <div class="mb-6 p-4 rounded-xl border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 flex items-start gap-3">
     <iconify-icon icon="ri:sticky-note-line" class="text-neutral-500 text-lg flex-shrink-0"></iconify-icon>
@@ -69,6 +80,12 @@
             <p class="text-xs text-secondary-light font-medium mb-1">No. Surat Jalan</p>
             <p class="font-bold text-success-700 text-sm mb-0">{{ $permintaan->suratJalan->no_sj }}</p>
         </div>
+        @if($permintaan->no_po_customer)
+        <div>
+            <p class="text-xs text-secondary-light font-medium mb-1">No. PO Customer</p>
+            <p class="font-bold text-sm dark:text-white mb-0">{{ $permintaan->no_po_customer }}</p>
+        </div>
+        @endif
         <div>
             <p class="text-xs text-secondary-light font-medium mb-1">Tanggal</p>
             <p class="font-medium text-sm dark:text-white mb-0">{{ $permintaan->suratJalan->tanggal->format('d M Y') }}</p>

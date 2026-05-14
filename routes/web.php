@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\BarangController;
 use App\Http\Controllers\Admin\PembelianController;
 use App\Http\Controllers\Admin\PengeluaranController;
+use App\Http\Controllers\Admin\PengeluaranAsetController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Gudang\SuratJalanController;
@@ -19,6 +21,15 @@ use App\Http\Controllers\Sales\DashboardController as SalesDashboard;
 use App\Http\Controllers\Sales\PermintaanController as SalesPermintaanController;
 use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboard;
 use App\Http\Controllers\Pelanggan\PermintaanController as PelangganPermintaanController;
+use App\Http\Controllers\Sawit\AdminDashboardController as SawitAdminDashboard;
+use App\Http\Controllers\Sawit\AccountingDashboardController as SawitAccountingDashboard;
+use App\Http\Controllers\Sawit\DirekturDashboardController as SawitDirekturDashboard;
+use App\Http\Controllers\Sawit\BarangController as SawitBarangController;
+use App\Http\Controllers\Sawit\PenjualanController as SawitPenjualanController;
+use App\Http\Controllers\Sawit\PembelianController as SawitPembelianController;
+use App\Http\Controllers\Sawit\SuratJalanController as SawitSuratJalanController;
+use App\Http\Controllers\Sawit\PerusahaanController as SawitPerusahaanController;
+use App\Http\Controllers\Sawit\PenjualController as SawitPenjualController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/favicon.ico', function () {
@@ -38,7 +49,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Auth routes
+// Auth routes Middleware buat login
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])
@@ -48,10 +59,16 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
-// Notifications (semua role, harus login)
+// Notifications & Profile (semua role, harus login)
 Route::middleware('auth')->group(function () {
     Route::patch('notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notif.read');
     Route::patch('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notif.readAll');
+
+    // Profile & Settings
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('settings', [ProfileController::class, 'settings'])->name('profile.settings');
+    Route::put('settings/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
 });
 
 // Admin routes
@@ -65,20 +82,28 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('suppliers', SupplierController::class)->except(['show']);
 
     // Pembelian
-    Route::get('pembelian', [PembelianController::class, 'index'])->name('pembelian.index');
-    Route::get('pembelian/create', [PembelianController::class, 'create'])->name('pembelian.create');
-    Route::post('pembelian', [PembelianController::class, 'store'])->name('pembelian.store');
-    Route::get('pembelian/{pembelian}', [PembelianController::class, 'show'])->name('pembelian.show');
+    Route::get('pembelian/bukti/{path}', [PembelianController::class, 'buktiPembayaran'])
+        ->where('path', '.*')
+        ->name('pembelian.bukti');
+    Route::get('pembelian/export', [PembelianController::class, 'export'])->name('pembelian.export');
+    Route::resource('pembelian', PembelianController::class);
     Route::patch('pembelian/{pembelian}/status', [PembelianController::class, 'updateStatus'])->name('pembelian.status');
 
     // Pengeluaran Operasional
+    Route::get('pengeluaran/bukti/{path}', [PengeluaranController::class, 'buktiFoto'])
+        ->where('path', '.*')
+        ->name('pengeluaran.bukti');
     Route::get('pengeluaran/export', [PengeluaranController::class, 'export'])->name('pengeluaran.export');
+    Route::get('pengeluaran/aset', [PengeluaranAsetController::class, 'index'])->name('pengeluaran.aset.index');
+    Route::get('pengeluaran/aset/{pengeluaranAset}/edit', [PengeluaranAsetController::class, 'edit'])->name('pengeluaran.aset.edit');
+    Route::put('pengeluaran/aset/{pengeluaranAset}', [PengeluaranAsetController::class, 'update'])->name('pengeluaran.aset.update');
     Route::resource('pengeluaran', PengeluaranController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
 
     // Invoice (admin)
     Route::get('invoice', [InvoiceController::class, 'index'])->name('invoice.index');
     Route::get('invoice/export', [InvoiceController::class, 'export'])->name('invoice.export');
     Route::get('invoice/{permintaan}', [InvoiceController::class, 'show'])->name('invoice.show');
+    Route::patch('invoice/{permintaan}/items/{detail}', [InvoiceController::class, 'updateItem'])->name('invoice.items.update');
     Route::get('invoice/{permintaan}/print', [InvoiceController::class, 'print'])->name('invoice.print');
 
     // Manajemen User
@@ -121,6 +146,11 @@ Route::middleware(['auth', 'role:sales'])->prefix('sales')->name('sales.')->grou
 
     // Permintaan Barang
     Route::get('permintaan', [SalesPermintaanController::class, 'index'])->name('permintaan.index');
+    Route::get('permintaan/create', [SalesPermintaanController::class, 'create'])->name('permintaan.create');
+    Route::post('permintaan', [SalesPermintaanController::class, 'store'])->name('permintaan.store');
+    Route::get('permintaan/{permintaan}/edit', [SalesPermintaanController::class, 'edit'])->name('permintaan.edit');
+    Route::put('permintaan/{permintaan}', [SalesPermintaanController::class, 'update'])->name('permintaan.update');
+    Route::delete('permintaan/{permintaan}', [SalesPermintaanController::class, 'destroy'])->name('permintaan.destroy');
     Route::get('permintaan/{permintaan}', [SalesPermintaanController::class, 'show'])->name('permintaan.show');
     Route::patch('permintaan/{permintaan}/ceklis', [SalesPermintaanController::class, 'ceklis'])->name('permintaan.ceklis');
 });
@@ -129,13 +159,20 @@ Route::middleware(['auth', 'role:sales'])->prefix('sales')->name('sales.')->grou
 Route::middleware(['auth', 'role:purchasing'])->prefix('purchasing')->name('purchasing.')->group(function () {
     Route::get('/dashboard', [PurchasingDashboard::class, 'index'])->name('dashboard');
 
-    Route::get('pembelian', [PembelianController::class, 'index'])->name('pembelian.index');
-    Route::get('pembelian/create', [PembelianController::class, 'create'])->name('pembelian.create');
-    Route::post('pembelian', [PembelianController::class, 'store'])->name('pembelian.store');
-    Route::get('pembelian/{pembelian}', [PembelianController::class, 'show'])->name('pembelian.show');
+    Route::get('pembelian/bukti/{path}', [PembelianController::class, 'buktiPembayaran'])
+        ->where('path', '.*')
+        ->name('pembelian.bukti');
+    Route::get('pembelian/export', [PembelianController::class, 'export'])->name('pembelian.export');
+    Route::resource('pembelian', PembelianController::class);
     Route::patch('pembelian/{pembelian}/status', [PembelianController::class, 'updateStatus'])->name('pembelian.status');
 
+    Route::get('pengeluaran/bukti/{path}', [PengeluaranController::class, 'buktiFoto'])
+        ->where('path', '.*')
+        ->name('pengeluaran.bukti');
     Route::get('pengeluaran/export', [PengeluaranController::class, 'export'])->name('pengeluaran.export');
+    Route::get('pengeluaran/aset', [PengeluaranAsetController::class, 'index'])->name('pengeluaran.aset.index');
+    Route::get('pengeluaran/aset/{pengeluaranAset}/edit', [PengeluaranAsetController::class, 'edit'])->name('pengeluaran.aset.edit');
+    Route::put('pengeluaran/aset/{pengeluaranAset}', [PengeluaranAsetController::class, 'update'])->name('pengeluaran.aset.update');
     Route::get('pengeluaran', [PengeluaranController::class, 'index'])->name('pengeluaran.index');
     Route::get('pengeluaran/create', [PengeluaranController::class, 'create'])->name('pengeluaran.create');
     Route::post('pengeluaran', [PengeluaranController::class, 'store'])->name('pengeluaran.store');
@@ -146,10 +183,59 @@ Route::middleware(['auth', 'role:purchasing'])->prefix('purchasing')->name('purc
 // Pelanggan routes
 Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
     Route::get('/dashboard', [PelangganDashboard::class, 'index'])->name('dashboard');
+});
 
-    // Permintaan Barang
-    Route::get('permintaan', [PelangganPermintaanController::class, 'index'])->name('permintaan.index');
-    Route::get('permintaan/create', [PelangganPermintaanController::class, 'create'])->name('permintaan.create');
-    Route::post('permintaan', [PelangganPermintaanController::class, 'store'])->name('permintaan.store');
-    Route::get('permintaan/{permintaan}', [PelangganPermintaanController::class, 'show'])->name('permintaan.show');
+// ========================================
+// MODUL SAWIT - TERPISAH DARI SISTEM LAMA
+// ========================================
+
+// Admin Sawit routes
+Route::middleware(['auth', 'role:adminsawit'])->prefix('sawit/admin')->name('sawit.admin.')->group(function () {
+    Route::get('/dashboard', [SawitAdminDashboard::class, 'index'])->name('dashboard');
+    
+    // Master Data Barang Sawit
+    Route::get('barang/export', [SawitBarangController::class, 'export'])->name('barang.export');
+    Route::resource('barang', SawitBarangController::class);
+    
+    // Master Data Perusahaan (Pembeli)
+    Route::resource('perusahaan', SawitPerusahaanController::class)->except(['show']);
+    
+    // Master Data Penjual
+    Route::resource('penjual', SawitPenjualController::class)->except(['show']);
+    
+    // Penjualan Sawit
+    Route::get('penjualan/export', [SawitPenjualanController::class, 'export'])->name('penjualan.export');
+    Route::get('penjualan/{penjualan}/print', [SawitPenjualanController::class, 'print'])->name('penjualan.print');
+    Route::resource('penjualan', SawitPenjualanController::class);
+    
+    // Pembelian Sawit
+    Route::get('pembelian/export', [SawitPembelianController::class, 'export'])->name('pembelian.export');
+    Route::resource('pembelian', SawitPembelianController::class);
+    
+    // Surat Jalan
+    Route::get('surat-jalan/{suratJalan}/print', [SawitSuratJalanController::class, 'print'])->name('surat-jalan.print');
+    Route::get('surat-jalan/penjualan/{id}', [SawitSuratJalanController::class, 'getPenjualan'])->name('surat-jalan.get-penjualan');
+    Route::resource('surat-jalan', SawitSuratJalanController::class)->except(['edit', 'update']);
+});
+
+// Accounting Sawit routes
+Route::middleware(['auth', 'role:accountingsawit'])->prefix('sawit/accounting')->name('sawit.accounting.')->group(function () {
+    Route::get('/dashboard', [SawitAccountingDashboard::class, 'index'])->name('dashboard');
+    
+    // TODO: Tambahkan route untuk fitur accounting sawit
+    // Contoh:
+    // Route::resource('pembayaran-petani', PembayaranPetaniController::class);
+    // Route::resource('pengeluaran', PengeluaranSawitController::class);
+    // Route::get('laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('laporan.index');
+});
+
+// Direktur Sawit routes (Read-Only)
+Route::middleware(['auth', 'role:direktursawit'])->prefix('sawit/direktur')->name('sawit.direktur.')->group(function () {
+    Route::get('/dashboard', [SawitDirekturDashboard::class, 'index'])->name('dashboard');
+    
+    // TODO: Tambahkan route untuk laporan direktur sawit (read-only)
+    // Contoh:
+    // Route::get('laporan-produksi', [LaporanProduksiController::class, 'index'])->name('laporan.produksi');
+    // Route::get('laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan');
+    // Route::get('laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('laporan.keuangan');
 });

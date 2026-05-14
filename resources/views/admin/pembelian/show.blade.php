@@ -55,37 +55,47 @@
 </div>
 @endif
 
-@if($pembelian->bukti_pembayaran)
+@if($pembelian->bukti_pembayaran && count($pembelian->bukti_pembayaran) > 0)
 <div class="mb-6">
     <div class="card shadow-none border border-neutral-200 dark:border-neutral-600 dark:bg-neutral-700 rounded-xl overflow-hidden">
         <div class="px-6 py-4 border-b border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 flex items-center gap-2">
             <iconify-icon icon="ri:image-line" class="text-warning-600 text-lg"></iconify-icon>
-            <h6 class="font-semibold mb-0 dark:text-white text-sm">Bukti Pembayaran</h6>
-            <a href="{{ Storage::url($pembelian->bukti_pembayaran) }}" target="_blank"
-                class="ml-auto flex items-center gap-1.5 text-xs text-primary-600 hover:text-primary-700 font-medium transition">
-                <iconify-icon icon="ri:external-link-line"></iconify-icon> Buka di tab baru
-            </a>
+            <h6 class="font-semibold mb-0 dark:text-white text-sm">Bukti Pembayaran ({{ count($pembelian->bukti_pembayaran) }} File)</h6>
         </div>
-        <div class="p-6 flex items-start gap-6">
-            @php $ext = pathinfo($pembelian->bukti_pembayaran, PATHINFO_EXTENSION); @endphp
+        <div class="p-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            @foreach($pembelian->bukti_pembayaran as $bukti)
+            @php
+                $rawPath = trim((string) $bukti);
+                if (filter_var($rawPath, FILTER_VALIDATE_URL)) {
+                    $urlPath = parse_url($rawPath, PHP_URL_PATH) ?? '';
+                    $normalizedPath = ltrim((string) $urlPath, '/');
+                } else {
+                    $normalizedPath = ltrim($rawPath, '/');
+                }
+
+                $normalizedPath = str_replace('\\', '/', $normalizedPath);
+                if (str_starts_with($normalizedPath, 'storage/')) {
+                    $normalizedPath = substr($normalizedPath, 8);
+                }
+                if (str_starts_with($normalizedPath, 'public/')) {
+                    $normalizedPath = substr($normalizedPath, 7);
+                }
+                $fileUrl = fin_route('pembelian.bukti', ['path' => $normalizedPath]);
+                $ext = pathinfo($normalizedPath, PATHINFO_EXTENSION);
+            @endphp
             @if(in_array(strtolower($ext), ['jpg','jpeg','png','webp']))
-            <a href="{{ Storage::url($pembelian->bukti_pembayaran) }}" target="_blank">
-                <img src="{{ Storage::url($pembelian->bukti_pembayaran) }}" alt="Bukti Pembayaran"
-                    class="max-h-64 rounded-lg object-contain border border-neutral-200 hover:opacity-90 transition cursor-zoom-in">
+            <a href="{{ $fileUrl }}" target="_blank" class="block rounded-lg overflow-hidden border border-neutral-200 hover:opacity-90 transition">
+                <img src="{{ $fileUrl }}" alt="Bukti Pembayaran"
+                    class="w-full h-32 object-cover">
             </a>
             @else
-            <a href="{{ Storage::url($pembelian->bukti_pembayaran) }}" target="_blank"
-                class="flex items-center gap-4 p-5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 transition">
-                <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <iconify-icon icon="ri:file-pdf-line" class="text-red-500 text-2xl"></iconify-icon>
-                </div>
-                <div>
-                    <p class="font-semibold text-sm text-neutral-800 mb-0">{{ basename($pembelian->bukti_pembayaran) }}</p>
-                    <p class="text-xs text-secondary-light mb-0">Klik untuk membuka PDF</p>
-                </div>
-                <iconify-icon icon="ri:download-line" class="text-red-500 ml-4 text-lg"></iconify-icon>
+            <a href="{{ $fileUrl }}" target="_blank"
+                class="flex flex-col items-center justify-center gap-2 h-32 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 transition text-center p-2">
+                <iconify-icon icon="ri:file-pdf-line" class="text-red-500 text-3xl"></iconify-icon>
+                <p class="font-semibold text-xs text-neutral-800 mb-0 truncate w-full px-2" title="{{ basename($normalizedPath) }}">{{ basename($normalizedPath) }}</p>
             </a>
             @endif
+            @endforeach
         </div>
     </div>
 </div>

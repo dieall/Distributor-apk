@@ -177,19 +177,7 @@
                     </a>
                 </li>
 
-                <li class="sidebar-menu-group-title">{{ $isAdmin ? 'Permintaan Pelanggan' : 'Permintaan Barang' }}</li>
-                <li class="{{ request()->routeIs('pelanggan.permintaan.index') || request()->routeIs('pelanggan.permintaan.show') ? 'active-page' : '' }}">
-                    <a href="{{ route('pelanggan.permintaan.index') }}">
-                        <iconify-icon icon="ri:file-list-line" class="menu-icon"></iconify-icon>
-                        <span>Daftar Permintaan</span>
-                    </a>
-                </li>
-                <li class="{{ request()->routeIs('pelanggan.permintaan.create') ? 'active-page' : '' }}">
-                    <a href="{{ route('pelanggan.permintaan.create') }}">
-                        <iconify-icon icon="ri:add-circle-line" class="menu-icon"></iconify-icon>
-                        <span>Buat Permintaan</span>
-                    </a>
-                </li>
+
             @endif
 
         </ul>

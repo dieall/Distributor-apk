@@ -17,7 +17,7 @@ class DashboardController extends Controller
     {
         $ttl = max(15, (int) config('cache.admin_dashboard_ttl', 90));
 
-        $data = Cache::remember('admin.dashboard.aggregate.v1', now()->addSeconds($ttl), function () {
+        $data = Cache::remember('admin.dashboard.aggregate.v2', now()->addSeconds($ttl), function () {
             return $this->buildDashboardData();
         });
 
@@ -37,7 +37,8 @@ class DashboardController extends Controller
             ->sum('permintaan_detail.subtotal_jual');
         $pembelianBulanIni = Pembelian::whereBetween('tanggal', $bulanIni)->sum('total');
         $pengeluaranBulanIni = Pengeluaran::whereBetween('tanggal', $bulanIni)->sum('nominal');
-        $keuntunganBulanIni = $penjualanBulanIni - $pembelianBulanIni - $pengeluaranBulanIni;
+        $hppBulanIni = $this->hargaPokokPenjualanUntukPeriode($bulanIni);
+        $keuntunganBulanIni = $penjualanBulanIni - $hppBulanIni - $pengeluaranBulanIni;
 
         $stats = [
             'total_barang'        => Barang::count(),
@@ -90,15 +91,15 @@ class DashboardController extends Controller
                 ->whereBetween('permintaan_barang.tanggal_request', $periode)
                 ->where('permintaan_detail.is_checked', true)
                 ->sum('permintaan_detail.subtotal_jual');
-            $pembelian = Pembelian::whereBetween('tanggal', $periode)->sum('total');
+            $hpp = $this->hargaPokokPenjualanUntukPeriode($periode);
             $pengeluaran = Pengeluaran::whereBetween('tanggal', $periode)->sum('nominal');
 
             $profitChart[] = [
                 'label' => $bulan->translatedFormat('M Y'),
                 'penjualan' => (float) $penjualan,
-                'pembelian' => (float) $pembelian,
+                'hpp' => (float) $hpp,
                 'pengeluaran' => (float) $pengeluaran,
-                'keuntungan' => (float) ($penjualan - $pembelian - $pengeluaran),
+                'keuntungan' => (float) ($penjualan - $hpp - $pengeluaran),
             ];
         }
 
@@ -143,5 +144,37 @@ class DashboardController extends Controller
             'recentPermintaan',
             'topBarang'
         );
+    }
+
+    /**
+     * HPP penjualan ke pelanggan: nilai mutasi stok (harga pokok saat barang keluar lewat surat jalan,
+     * mengikuti harga rata dari penerimaan/PO) plus perkiraan untuk permintaan ter-ceklist yang belum ada SJ.
+     *
+     * @param  array{0: string, 1: string}  $periode  [tanggal_mulai, tanggal_akhir] (Y-m-d)
+     */
+    protected function hargaPokokPenjualanUntukPeriode(array $periode): float
+    {
+        [$start, $end] = $periode;
+
+        $dariMutasi = (float) (DB::table('stok_mutasi')
+            ->join('surat_jalan', 'stok_mutasi.referensi', '=', 'surat_jalan.no_sj')
+            ->join('permintaan_barang', 'surat_jalan.permintaan_id', '=', 'permintaan_barang.id')
+            ->whereBetween('permintaan_barang.tanggal_request', [$start, $end])
+            ->selectRaw(
+                "SUM(CASE WHEN stok_mutasi.tipe = 'keluar' THEN stok_mutasi.jumlah * stok_mutasi.harga_satuan ELSE - (stok_mutasi.jumlah * stok_mutasi.harga_satuan) END) as hpp"
+            )
+            ->value('hpp') ?? 0);
+
+        $tanpaSj = (float) (DB::table('permintaan_detail')
+            ->join('permintaan_barang as pb', 'permintaan_detail.permintaan_id', '=', 'pb.id')
+            ->leftJoin('surat_jalan as sj', 'sj.permintaan_id', '=', 'pb.id')
+            ->leftJoin('stok', 'stok.barang_id', '=', 'permintaan_detail.barang_id')
+            ->where('permintaan_detail.is_checked', true)
+            ->whereNull('sj.id')
+            ->whereBetween('pb.tanggal_request', [$start, $end])
+            ->selectRaw('SUM(permintaan_detail.jumlah_disetujui * COALESCE(stok.harga_rata, 0)) as hpp')
+            ->value('hpp') ?? 0);
+
+        return $dariMutasi + $tanpaSj;
     }
 }
